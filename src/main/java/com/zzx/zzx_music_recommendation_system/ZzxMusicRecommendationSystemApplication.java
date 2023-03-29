@@ -1,9 +1,11 @@
 package com.zzx.zzx_music_recommendation_system;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
+@MapperScan("com.zzx.zzx_music_recommendation_system.mapper")
 public class ZzxMusicRecommendationSystemApplication {
 
     public static void main(String[] args) {
