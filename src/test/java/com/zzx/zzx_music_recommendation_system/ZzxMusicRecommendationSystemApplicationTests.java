@@ -1,5 +1,6 @@
 package com.zzx.zzx_music_recommendation_system;
 
+import net.minidev.json.writer.JsonReader;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -13,9 +14,7 @@ class ZzxMusicRecommendationSystemApplicationTests {
     }
 
     public static void main(String[] args) {
-        UUID uuid = UUID.randomUUID();
-        String s = uuid.toString();
-        System.out.println(s);
+
 
     }
 

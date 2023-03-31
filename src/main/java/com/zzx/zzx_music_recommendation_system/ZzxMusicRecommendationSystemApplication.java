@@ -12,4 +12,5 @@ public class ZzxMusicRecommendationSystemApplication {
         SpringApplication.run(ZzxMusicRecommendationSystemApplication.class, args);
     }
 
+
 }
