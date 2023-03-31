@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zzx.zzx_music_recommendation_system.mapper.UserInfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.zzx.zzx_music_recommendation_system.entity.UserInfo">
+        <id column="user_id" property="userId" />
+        <result column="user_name" property="userName" />
+        <result column="user_type" property="userType" />
+        <result column="user_email" property="userEmail" />
+        <result column="user_password" property="userPassword" />
+        <result column="user_number" property="userNumber" />
+        <result column="user_phone" property="userPhone" />
+        <result column="create_user_id" property="createUserId" />
+        <result column="modify_user_id" property="modifyUserId" />
+        <result column="gmt_created" property="gmtCreated" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="value1" property="value1" />
+        <result column="value2" property="value2" />
+        <result column="value3" property="value3" />
+        <result column="is_delete" property="isDelete" />
+    </resultMap>
+
+</mapper>
