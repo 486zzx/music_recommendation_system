@@ -92,6 +92,13 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!--在java中应用深度学习-->
+        <dependency>
+            <groupId>com.github.chen0040</groupId>
+            <artifactId>java-tensorflow-music</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+
 
     </dependencies>
 

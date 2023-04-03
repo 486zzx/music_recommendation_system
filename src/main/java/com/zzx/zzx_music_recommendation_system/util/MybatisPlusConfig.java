@@ -23,6 +23,8 @@ public class MybatisPlusConfig {
         tables.add("song_list");
         tables.add("user_info");
         tables.add("user_song_list");
+        tables.add("user_type");
+
 
 
         FastAutoGenerator.create("jdbc:mysql://localhost:3306/music_recommend_sys?serverTimezone=GMT%2B8","root","root")

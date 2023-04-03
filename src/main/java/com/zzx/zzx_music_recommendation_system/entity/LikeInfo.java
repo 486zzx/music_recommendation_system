@@ -61,5 +61,8 @@ public class LikeInfo implements Serializable {
     @TableLogic
     private Integer isDelete;
 
+    @TableField("like_type")
+    private Integer likeType;
+
 
 }
