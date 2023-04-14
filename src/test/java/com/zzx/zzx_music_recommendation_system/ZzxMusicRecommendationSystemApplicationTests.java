@@ -1,25 +1,67 @@
 package com.zzx.zzx_music_recommendation_system;
 
+import cn.hutool.extra.mail.MailUtil;
 import com.github.chen0040.tensorflow.classifiers.models.cifar10.Cifar10AudioClassifier;
-import com.github.chen0040.tensorflow.classifiers.utils.FileUtils;
+import com.zzx.zzx_music_recommendation_system.utils.FileUtils;
 import net.minidev.json.writer.JsonReader;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import redis.clients.jedis.Jedis;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @SpringBootTest
 class ZzxMusicRecommendationSystemApplicationTests {
+
+    @Autowired
+    private RedisTemplate redisTemplate;//二进制(能取，在可视化工具中看不到数据)
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;//RedisTemplate 的子类
 
     @Test
     void contextLoads() {
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
+        String s = MailUtil.send("1960104079@qq.com", "ces", "content", false);
+        String s1 = MailUtil.send("1960104adfg.com", "ces", "content", false);
+
+        System.out.println(s);
+        System.out.println(s1);
+    }
+
+    // 操作字符串类型
+    @Test
+    public void test01() throws Exception {
+        // 获取string操作对象
+        ValueOperations<String, String> opsForValue = stringRedisTemplate.opsForValue();
+
+        // 存值
+        opsForValue.set("city", "nan");
+
+        // 取值
+        String value = opsForValue.get("city");
+        System.out.println(value);
+
+        // 存验证码存活5分钟
+        opsForValue.set("sms_13700137000", "6375", 60L,TimeUnit.SECONDS);
+
+        //删除
+        redisTemplate.delete("city");
+
+    }
+
+    /*public static void main(String[] args) throws IOException {
         Cifar10AudioClassifier classifier = new Cifar10AudioClassifier();
         classifier.load_model();
 
@@ -35,6 +77,6 @@ class ZzxMusicRecommendationSystemApplicationTests {
 
             System.out.println("Predicted: " + label);
         }
-    }
+    }*/
 
 }

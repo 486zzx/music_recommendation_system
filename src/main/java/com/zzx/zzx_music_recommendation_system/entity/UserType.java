@@ -36,8 +36,8 @@ public class UserType implements Serializable {
     @TableField("type_id")
     private Long typeId;
 
-    @TableField("����")
-    private Integer ����;
+    @TableField("score")
+    private Integer score;
 
     @TableField("create_user_id")
     private Long createUserId;
