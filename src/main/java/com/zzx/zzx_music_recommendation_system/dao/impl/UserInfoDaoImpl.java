@@ -30,4 +30,13 @@ public class UserInfoDaoImpl extends ServiceImpl<UserInfoMapper, UserInfo> imple
                 .apply(StringConstants.LIMIT_1));
         return Objects.nonNull(userInfo);
     }
+
+    @Override
+    public UserInfo isUserExist(String userEmail, String userPassword) {
+        UserInfo userInfo = userInfoMapper.selectOne(new QueryWrapper<UserInfo>().lambda()
+                .eq(UserInfo::getUserEmail, userEmail)
+                .eq(UserInfo::getUserPassword, userPassword)
+                .apply(StringConstants.LIMIT_1));
+        return userInfo;
+    }
 }

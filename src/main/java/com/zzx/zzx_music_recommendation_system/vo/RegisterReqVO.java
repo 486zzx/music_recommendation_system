@@ -22,11 +22,14 @@ import java.time.LocalDateTime;
 public class RegisterReqVO {
 
     @JSONField(format = "trim")
+    @NotBlank(message = "用户名不能为空！")
     private String userName;
 
+    @NotBlank(message = "邮箱不能为空！")
     @JSONField(format = "trim")
     private String userEmail;
 
+    @NotBlank(message = "密码不能为空！")
     @JSONField(format = "trim")
     private String userPassword;
 

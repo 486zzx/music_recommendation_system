@@ -24,11 +24,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Autowired
     private LoginUserCache loginUserCache;
 
-    //    @Value("${jwt.tokenHeader}")
     public static final String TOKEN_HEADER = "token";
 
-//    @Value("${jwt.tokenHead}")
-//    private String tokenHead = "token";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -36,7 +33,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             IOException {
 
         String authToken = UserInfoUtil.obtainAuthorization(request, TOKEN_HEADER);
-        log.info("authToken:{}", authToken);
+        log.info("token:{}", authToken);
         //存在token
         if (null != authToken) {
             String username = jwtTokenUtil.getUserNameFormToken(authToken);

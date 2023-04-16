@@ -1,6 +1,6 @@
 package com.zzx.zzx_music_recommendation_system.vo;
 
-import com.zzx.zzx_music_recommendation_system.ResCodeEnum;
+import com.zzx.zzx_music_recommendation_system.enums.ResCodeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

@@ -15,9 +15,9 @@ public class LoginUserCache {
     private Cache<String, UserDetails> cacheMap;
 
     /**
-     * session超时时间，30分钟
+     * session超时时间，60分钟
      */
-    public static final Integer SESSION_TIMEOUT = 120;
+    public static final Integer SESSION_TIMEOUT = 60;
 
     @PostConstruct
     private void initCacheMap() {

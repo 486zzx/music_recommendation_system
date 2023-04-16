@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
  * @USER: zzx
  * @DATE: 2023/4/14 17:45
  */
-@ApiModel("获取验证码VO")
+@ApiModel("获取验证码reqVO")
 @Data
 public class ValidateCodeReqVO {
 

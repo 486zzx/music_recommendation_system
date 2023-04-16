@@ -2,22 +2,33 @@ package com.zzx.zzx_music_recommendation_system.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.mail.MailUtil;
-import com.zzx.zzx_music_recommendation_system.ResCodeEnum;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.zzx.zzx_music_recommendation_system.dao.SongListDao;
 import com.zzx.zzx_music_recommendation_system.dao.UserInfoDao;
+import com.zzx.zzx_music_recommendation_system.dao.UserSongListDao;
+import com.zzx.zzx_music_recommendation_system.entity.SongList;
 import com.zzx.zzx_music_recommendation_system.entity.UserInfo;
+import com.zzx.zzx_music_recommendation_system.entity.UserSongList;
+import com.zzx.zzx_music_recommendation_system.enums.SongListTypeEnum;
 import com.zzx.zzx_music_recommendation_system.mapper.UserInfoMapper;
 import com.zzx.zzx_music_recommendation_system.service.UserInfoService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zzx.zzx_music_recommendation_system.utils.CommonUtils;
 import com.zzx.zzx_music_recommendation_system.utils.MyException;
 import com.zzx.zzx_music_recommendation_system.utils.RedisUtils;
+import com.zzx.zzx_music_recommendation_system.vo.LoginReqVO;
 import com.zzx.zzx_music_recommendation_system.vo.RegisterReqVO;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -36,6 +47,11 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
     @Autowired
     private RedisUtils redisUtils;
 
+    @Autowired
+    private SongListDao songListDao;
+
+    @Autowired
+    private UserSongListDao userSongListDao;
 
     @Override
     public void sendValidateCode(String email, HttpServletRequest request) {
@@ -76,16 +92,48 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.NESTED)
     public void register(RegisterReqVO reqVO) {
         String code = redisUtils.get(RedisUtils.Type.EMAIL_VALIDATE_CODE, reqVO.getUserEmail());
         if (!StrUtil.equals(reqVO.getCode(), code)) {
             throw new MyException("验证码错误");
         }
-        //注册用户
 
-        //用户标签表
+        //注册用户
+        UserInfo userInfo = new UserInfo();
+        BeanUtils.copyProperties(reqVO, userInfo);
+        CommonUtils.fillWhenSave(userInfo);
+        userInfoDao.save(userInfo);
+
+        //歌单表
+        List<SongList> songLists = new ArrayList<>();
+        for (SongListTypeEnum e : SongListTypeEnum.values()) {
+            if (e.getCode().equals(SongListTypeEnum.COMMON_SONG_LIST.getCode())) {
+                continue;
+            }
+            SongList songList = new SongList();
+            songList.setUserId(userInfo.getUserId());
+            songList.setSongListType(e.getCode());
+            CommonUtils.fillWhenSave(songList);
+            songLists.add(songList);
+        }
+        songListDao.saveBatch(songLists);
 
         //用户歌单表
+        List<UserSongList> userSongLists = new ArrayList<>();
+        for (SongList s : songLists) {
+            UserSongList u = new UserSongList();
+            u.setSongListId(s.getSongListId());
+            CommonUtils.fillWhenSave(u);
+            userSongLists.add(u);
+        }
+        userSongListDao.saveBatch(userSongLists);
+    }
+
+    @Override
+    public void login(LoginReqVO reqVO) {
+        UserInfo userInfo = userInfoDao.isUserExist(reqVO.getUserEmail(), reqVO.getUserPassword());
+        //
     }
 
 

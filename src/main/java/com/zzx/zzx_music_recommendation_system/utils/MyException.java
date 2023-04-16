@@ -1,6 +1,6 @@
 package com.zzx.zzx_music_recommendation_system.utils;
 
-import com.zzx.zzx_music_recommendation_system.ResCodeEnum;
+import com.zzx.zzx_music_recommendation_system.enums.ResCodeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -22,7 +22,7 @@ public class MyException extends RuntimeException {
      * @param message
      * @param code
      */
-    public MyException(String message, Integer code) {
+    public MyException(Integer code,String message) {
         super(message);
         this.code = code;
     }
