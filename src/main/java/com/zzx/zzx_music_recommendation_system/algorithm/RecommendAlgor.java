@@ -5,7 +5,7 @@ package com.zzx.zzx_music_recommendation_system.algorithm;
  * @USER: zzx
  * @DATE: 2023/3/31 18:27
  */
-public class Recommend {
+public class RecommendAlgor {
 
     /**
      * 算法使用选择
