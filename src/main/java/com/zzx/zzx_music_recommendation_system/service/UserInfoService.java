@@ -34,6 +34,6 @@ public interface UserInfoService extends IService<UserInfo> {
 
     void register(RegisterReqVO reqVO);
 
-    void login(LoginReqVO reqVO);
+    String login(LoginReqVO reqVO);
 
 }

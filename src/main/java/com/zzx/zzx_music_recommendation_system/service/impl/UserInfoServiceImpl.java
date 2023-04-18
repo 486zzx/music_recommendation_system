@@ -10,6 +10,8 @@ import com.zzx.zzx_music_recommendation_system.entity.SongList;
 import com.zzx.zzx_music_recommendation_system.entity.UserInfo;
 import com.zzx.zzx_music_recommendation_system.entity.UserSongList;
 import com.zzx.zzx_music_recommendation_system.enums.SongListTypeEnum;
+import com.zzx.zzx_music_recommendation_system.login.JwtTokenUtil;
+import com.zzx.zzx_music_recommendation_system.login.LoginUserCache;
 import com.zzx.zzx_music_recommendation_system.mapper.UserInfoMapper;
 import com.zzx.zzx_music_recommendation_system.service.UserInfoService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -20,6 +22,12 @@ import com.zzx.zzx_music_recommendation_system.vo.LoginReqVO;
 import com.zzx.zzx_music_recommendation_system.vo.RegisterReqVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +60,18 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
 
     @Autowired
     private UserSongListDao userSongListDao;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    private LoginUserCache loginUserCache;
 
     @Override
     public void sendValidateCode(String email, HttpServletRequest request) {
@@ -99,9 +119,16 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
             throw new MyException("验证码错误");
         }
 
+        //查看用户是否存在,存在则报错
+        if (userInfoDao.isEmailExist(reqVO.getUserEmail())) {
+            throw new MyException("该邮箱已注册");
+        }
+
         //注册用户
         UserInfo userInfo = new UserInfo();
-        BeanUtils.copyProperties(reqVO, userInfo);
+        userInfo.setUserName(reqVO.getUserName());
+        userInfo.setUserPassword(new BCryptPasswordEncoder().encode(reqVO.getUserPassword()));
+        userInfo.setUserEmail(reqVO.getUserEmail());
         CommonUtils.fillWhenSave(userInfo);
         userInfoDao.save(userInfo);
 
@@ -131,9 +158,24 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
     }
 
     @Override
-    public void login(LoginReqVO reqVO) {
-        UserInfo userInfo = userInfoDao.isUserExist(reqVO.getUserEmail(), reqVO.getUserPassword());
-        //
+    public String login(LoginReqVO reqVO) {
+        UserDetails userDetails =
+                userDetailsService.loadUserByUsername(reqVO.getUserEmail());
+        if (null == userDetails || ! passwordEncoder.matches(reqVO.getUserPassword(),
+                userDetails.getPassword())) {
+            throw new MyException(301, "用户名或密码错误");
+        }
+        if (!userDetails.isEnabled()) {
+            throw new MyException(302, "账号被禁用，请联系管理员");
+        }
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(userDetails, null,
+                        null);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String token = jwtTokenUtil.generateToken(userDetails);
+        loginUserCache.set(token, userDetails);
+        userInfoDao.login(reqVO.getUserEmail());
+        return token;
     }
 
 

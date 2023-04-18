@@ -9,4 +9,6 @@ public interface UserInfoDao extends IService<UserInfo>  {
 
     public UserInfo isUserExist(String userEmail, String userPassword);
 
+    public void login(String email);
+
 }

@@ -80,10 +80,9 @@ public class UserInfoController {
 
     @ApiOperation("登录")
     @PostMapping(value = "/login")
-    public ResVO<Void> login(@RequestBody ReqVO<LoginReqVO> reqVO) {
+    public ResVO<String> login(@RequestBody ReqVO<LoginReqVO> reqVO) {
         try {
-
-            return ResVO.ok();
+            return ResVO.ok(userInfoService.login(reqVO.getArgs()));
         } catch (MyException e) {
             return ResVO.fail(e.getMessage());
         }

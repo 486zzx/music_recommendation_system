@@ -6,6 +6,7 @@ import com.zzx.zzx_music_recommendation_system.constant.StringConstants;
 import com.zzx.zzx_music_recommendation_system.dao.UserInfoDao;
 import com.zzx.zzx_music_recommendation_system.entity.UserInfo;
 import com.zzx.zzx_music_recommendation_system.mapper.UserInfoMapper;
+import com.zzx.zzx_music_recommendation_system.utils.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,7 @@ public class UserInfoDaoImpl extends ServiceImpl<UserInfoMapper, UserInfo> imple
     public boolean isEmailExist(String email) {
         UserInfo userInfo = userInfoMapper.selectOne(new QueryWrapper<UserInfo>().lambda()
                 .eq(UserInfo::getUserEmail, email)
+                .eq(UserInfo::getIsDelete, 1)
                 .apply(StringConstants.LIMIT_1));
         return Objects.nonNull(userInfo);
     }
@@ -36,7 +38,17 @@ public class UserInfoDaoImpl extends ServiceImpl<UserInfoMapper, UserInfo> imple
         UserInfo userInfo = userInfoMapper.selectOne(new QueryWrapper<UserInfo>().lambda()
                 .eq(UserInfo::getUserEmail, userEmail)
                 .eq(UserInfo::getUserPassword, userPassword)
+                .eq(UserInfo::getIsDelete, 1)
                 .apply(StringConstants.LIMIT_1));
         return userInfo;
+    }
+
+    @Override
+    public void login(String email) {
+        UserInfo userInfo = this.getOne(new QueryWrapper<UserInfo>().lambda()
+                .eq(UserInfo::getUserEmail, email)
+                .eq(UserInfo::getIsDelete, 1));
+        CommonUtils.fillWhenUpdate(userInfo);
+        this.getBaseMapper().updateById(userInfo);
     }
 }
