@@ -34,7 +34,7 @@ public class DateTimeConstants {
     /**
      * cron表达式每天零点
      */
-    public static final String CRON_EVERYDAY_START_TIME_FORMAT = "0 0 0 * * ? ";
+    public static final String CRON_EVERYDAY_START_TIME_FORMAT = "0 0 0 * * ?";
 
     /**
      * cron表达式每月1日0点执行
