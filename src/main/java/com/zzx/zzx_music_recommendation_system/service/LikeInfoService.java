@@ -13,4 +13,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface LikeInfoService extends IService<LikeInfo> {
 
+    boolean updateMouthRank();
+
+    boolean updateDayRank();
+
 }

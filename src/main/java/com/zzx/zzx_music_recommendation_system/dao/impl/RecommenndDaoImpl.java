@@ -1,5 +1,6 @@
 package com.zzx.zzx_music_recommendation_system.dao.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zzx.zzx_music_recommendation_system.dao.RecommenndDao;
 import com.zzx.zzx_music_recommendation_system.entity.Recommend;
 import com.zzx.zzx_music_recommendation_system.mapper.RecommendMapper;

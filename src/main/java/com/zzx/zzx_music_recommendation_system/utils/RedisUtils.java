@@ -1,11 +1,19 @@
 package com.zzx.zzx_music_recommendation_system.utils;
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zzx.zzx_music_recommendation_system.entity.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -16,12 +24,14 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RedisUtils {
 
-    private final StringRedisTemplate stringRedisTemplate;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     @Autowired
-    public RedisUtils(StringRedisTemplate stringRedisTemplate) {
-        this.stringRedisTemplate = stringRedisTemplate;
-    }
+    private RedisTemplate redisTemplate;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     /**
      * 设置
@@ -35,6 +45,29 @@ public class RedisUtils {
         } else {
             stringRedisTemplate.opsForValue().set(type.getPrefix() + key, value);
         }
+    }
+
+    public <T> void setList(Type type, String key, List<T> value) {
+        redisTemplate.opsForList().rightPushAll(type.getPrefix() + key, value);
+    }
+
+    /**
+     * 使用后要用
+     *         List<?> users= objectMapper.convertValue(list, new TypeReference<List<?>>() {});
+     *         转换
+     * @param type
+     * @param key
+     * @return
+     * @param <T>
+     */
+    public <T>List<T> getList(Type type, String key, TypeReference<List<T>> tTypeReference) {
+        List<T> list = redisTemplate.opsForList().range(type.getPrefix() + key, 0, -1);
+        List<T> res = objectMapper.convertValue(list, tTypeReference);
+        return res;
+    }
+
+    public boolean deleteList(Type type, String key) {
+        return redisTemplate.delete(type.getPrefix() + key);
     }
 
 
@@ -59,7 +92,17 @@ public class RedisUtils {
         /**
          * 邮件验证码,保留5min
          */
-        EMAIL_VALIDATE_CODE("EMAIL:CODE", 5 * 60L)
+        EMAIL_VALIDATE_CODE("EMAIL_CODE:", 5 * 60L),
+
+        /**
+         * 月排行
+         */
+        MOUTH_RANKING("MOUTH_RANK:", null),
+
+        /**
+         * 日排行
+         */
+        DAY_RANKING("DAY_RANK:", null)
         ;
 
         /**

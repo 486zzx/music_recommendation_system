@@ -8,5 +8,5 @@ import com.zzx.zzx_music_recommendation_system.entity.MusicInfo;
  * @USER: zzx
  * @DATE: 2023/4/18 15:37
  */
-public class MusicInfoDao extends IService<MusicInfo> {
+public interface MusicInfoDao extends IService<MusicInfo> {
 }

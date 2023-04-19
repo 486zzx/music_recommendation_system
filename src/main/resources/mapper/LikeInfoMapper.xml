@@ -17,4 +17,14 @@
         <result column="is_delete" property="isDelete" />
     </resultMap>
 
+    <select id="updateMouthRank" resultType="java.lang.String">
+        select a.user_id
+        from like_info a
+        where a.delete_flag = 0 and
+        and a.gmt_created between #{startTime} and #{endTime}
+        group by a.user_id
+        order by COUNT (a.like_id) desc
+        limit 20
+    </select>
+
 </mapper>
