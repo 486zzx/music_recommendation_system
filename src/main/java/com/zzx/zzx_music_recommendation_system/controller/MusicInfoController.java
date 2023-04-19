@@ -4,6 +4,7 @@ import com.zzx.zzx_music_recommendation_system.entity.MusicInfo;
 import com.zzx.zzx_music_recommendation_system.service.LikeInfoService;
 import com.zzx.zzx_music_recommendation_system.service.MusicInfoService;
 import com.zzx.zzx_music_recommendation_system.service.SingerInfoService;
+import com.zzx.zzx_music_recommendation_system.vo.MusicDetailResVO;
 import com.zzx.zzx_music_recommendation_system.vo.RankResVO;
 import com.zzx.zzx_music_recommendation_system.vo.ReqVO;
 import com.zzx.zzx_music_recommendation_system.vo.ResVO;
@@ -43,6 +44,16 @@ public class MusicInfoController {
         return ResVO.ok(musicInfoService.getRank(reqVO.getArgs()));
     }
 
+
+    @ApiOperation("歌曲详情")
+    @PostMapping(value = "/musicDetail")
+    public ResVO<MusicDetailResVO> musicDetail(@RequestBody ReqVO<Long> reqVO) {
+        try {
+            return ResVO.ok(musicInfoService.musicDetail(reqVO.getArgs()));
+        } catch (Exception e) {
+            return ResVO.fail(e.getMessage());
+        }
+    }
 
 
 

@@ -2,10 +2,15 @@ package com.zzx.zzx_music_recommendation_system.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.zzx.zzx_music_recommendation_system.dao.LikeInfoDao;
+import com.zzx.zzx_music_recommendation_system.dao.MusicInfoDao;
 import com.zzx.zzx_music_recommendation_system.entity.LikeInfo;
+import com.zzx.zzx_music_recommendation_system.entity.MusicInfo;
+import com.zzx.zzx_music_recommendation_system.enums.SongListTypeEnum;
+import com.zzx.zzx_music_recommendation_system.login.UserInfoUtil;
 import com.zzx.zzx_music_recommendation_system.mapper.LikeInfoMapper;
 import com.zzx.zzx_music_recommendation_system.service.LikeInfoService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zzx.zzx_music_recommendation_system.utils.CommonUtils;
 import com.zzx.zzx_music_recommendation_system.utils.DateUtils;
 import com.zzx.zzx_music_recommendation_system.utils.RedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +37,9 @@ public class LikeInfoServiceImpl extends ServiceImpl<LikeInfoMapper, LikeInfo> i
 
     @Autowired
     private RedisUtils redisUtils;
+
+    @Autowired
+    private MusicInfoDao musicInfoDao;
 
     @Override
     public boolean updateMouthRank() {
@@ -73,5 +81,17 @@ public class LikeInfoServiceImpl extends ServiceImpl<LikeInfoMapper, LikeInfo> i
             return false;
         }
         return true;
+    }
+
+    @Override
+    public MusicInfo saveLikeInfo(Long musicId) {
+        MusicInfo musicInfo = musicInfoDao.getById(musicId);
+        LikeInfo likeInfo = new LikeInfo();
+        likeInfo.setUserId(UserInfoUtil.getUserId());
+        likeInfo.setMusicId(musicId);
+        likeInfo.setLikeType(SongListTypeEnum.PLAY.getCode());
+        CommonUtils.fillWhenSave(likeInfo);
+        likeInfoDao.save(likeInfo);
+        return musicInfo;
     }
 }

@@ -36,6 +36,9 @@ public class CommentInfo implements Serializable {
     @TableField("music_id")
     private Long musicId;
 
+    @TableField("father_id")
+    private Long fatherId;
+
     @TableField("create_user_id")
     private Long createUserId;
 
@@ -58,7 +61,7 @@ public class CommentInfo implements Serializable {
     private String value3;
 
     @TableField("is_delete")
-    @TableLogic
+    @TableLogic(value="1",delval="0")
     private Integer isDelete;
 
 

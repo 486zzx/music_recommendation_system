@@ -6,10 +6,13 @@ import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 public interface LikeInfoDao extends IService<LikeInfo> {
 
     List<String> updateMouthRank(LocalDateTime startTime, LocalDateTime endTime);
 
     List<String> updateDayRank(LocalDateTime startTime, LocalDateTime endTime);
+
+    Map<Integer, Long> getTypeCountMap(Long musicId);
 }

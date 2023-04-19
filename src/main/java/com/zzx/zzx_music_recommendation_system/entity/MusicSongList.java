@@ -58,7 +58,7 @@ public class MusicSongList implements Serializable {
     private String value3;
 
     @TableField("is_delete")
-    @TableLogic
+    @TableLogic(value="1",delval="0")
     private Integer isDelete;
 
 

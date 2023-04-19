@@ -29,6 +29,17 @@ import java.util.List;
 @RequestMapping("/zzx_music_recommendation_system/like-info")
 public class LikeInfoController {
 
+    @Autowired
+    private LikeInfoService likeInfoService;
 
+    @ApiOperation("播放音乐")
+    @PostMapping("/playMusic")
+    public ResVO<MusicInfo> playMusic(@RequestBody ReqVO<Long> musicId) {
+        try {
+            return ResVO.ok(likeInfoService.saveLikeInfo(musicId.getArgs()));
+        } catch (Exception e) {
+            return ResVO.fail(e.getMessage());
+        }
+    }
 
 }
