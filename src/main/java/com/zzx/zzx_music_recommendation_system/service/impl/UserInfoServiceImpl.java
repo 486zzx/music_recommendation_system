@@ -132,29 +132,18 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         CommonUtils.fillWhenSave(userInfo);
         userInfoDao.save(userInfo);
 
-        //歌单表
-        List<SongList> songLists = new ArrayList<>();
-        for (SongListTypeEnum e : SongListTypeEnum.values()) {
-            if (e.getCode().equals(SongListTypeEnum.COMMON_SONG_LIST.getCode())) {
-                continue;
-            }
-            SongList songList = new SongList();
-            songList.setUserId(userInfo.getUserId());
-            songList.setSongListType(e.getCode());
-            CommonUtils.fillWhenSave(songList);
-            songLists.add(songList);
-        }
-        songListDao.saveBatch(songLists);
+        //歌单表(当前播放)
+        SongList songList = new SongList();
+        songList.setUserId(userInfo.getUserId());
+        songList.setSongListType(SongListTypeEnum.NOW_PLAY.getCode());
+        CommonUtils.fillWhenSave(songList);
+        songListDao.save(songList);
 
         //用户歌单表
-        List<UserSongList> userSongLists = new ArrayList<>();
-        for (SongList s : songLists) {
-            UserSongList u = new UserSongList();
-            u.setSongListId(s.getSongListId());
-            CommonUtils.fillWhenSave(u);
-            userSongLists.add(u);
-        }
-        userSongListDao.saveBatch(userSongLists);
+        UserSongList u = new UserSongList();
+        u.setSongListId(songList.getSongListId());
+        CommonUtils.fillWhenSave(u);
+        userSongListDao.save(u);
     }
 
     @Override

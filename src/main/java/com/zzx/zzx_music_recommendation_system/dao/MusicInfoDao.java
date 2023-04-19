@@ -2,6 +2,9 @@ package com.zzx.zzx_music_recommendation_system.dao;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zzx.zzx_music_recommendation_system.entity.MusicInfo;
+import com.zzx.zzx_music_recommendation_system.vo.RankResVO;
+
+import java.util.List;
 
 /**
  * @DESCRIPTION:
@@ -9,4 +12,8 @@ import com.zzx.zzx_music_recommendation_system.entity.MusicInfo;
  * @DATE: 2023/4/18 15:37
  */
 public interface MusicInfoDao extends IService<MusicInfo> {
+
+    List<RankResVO> getMusicInfo(List<Long> musics);
+
+
 }

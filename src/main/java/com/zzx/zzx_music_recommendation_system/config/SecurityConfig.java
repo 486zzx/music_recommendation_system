@@ -56,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             @Override
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
                 UserInfo userInfo = userInfoDao.getOne( new QueryWrapper<UserInfo>().lambda()
-                        .eq(UserInfo::getIsDelete, 0)
+                        .eq(UserInfo::getIsDelete, 1)
                         .eq(UserInfo::getUserEmail, username));
                 if (null != userInfo) {
                     return User.withUsername(username)

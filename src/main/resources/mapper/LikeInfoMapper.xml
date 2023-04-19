@@ -18,13 +18,15 @@
     </resultMap>
 
     <select id="updateMouthRank" resultType="java.lang.String">
-        select a.user_id
+        select a.music_id
         from like_info a
-        where a.delete_flag = 0 and
+        where a.is_delete = 1
+        and a.like_type = 2
         and a.gmt_created between #{startTime} and #{endTime}
-        group by a.user_id
-        order by COUNT (a.like_id) desc
+        group by a.music_id
+        order by COUNT(1) desc
         limit 20
     </select>
+
 
 </mapper>

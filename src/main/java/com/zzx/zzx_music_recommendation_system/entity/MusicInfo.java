@@ -37,7 +37,7 @@ public class MusicInfo implements Serializable {
     private Integer musicType;
 
     @TableField("singer_id")
-    private Long singerId;
+    private String singerId;
 
     @TableField("type_ids")
     private String typeIds;

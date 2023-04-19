@@ -17,4 +17,6 @@ public interface LikeInfoService extends IService<LikeInfo> {
 
     boolean updateDayRank();
 
+
+
 }

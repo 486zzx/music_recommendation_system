@@ -1,13 +1,19 @@
 package com.zzx.zzx_music_recommendation_system;
 
 import cn.hutool.extra.mail.MailUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.chen0040.tensorflow.classifiers.models.cifar10.Cifar10AudioClassifier;
 import com.zzx.zzx_music_recommendation_system.entity.UserInfo;
 import com.zzx.zzx_music_recommendation_system.utils.FileUtils;
+import com.zzx.zzx_music_recommendation_system.utils.MusicUtils;
 import com.zzx.zzx_music_recommendation_system.utils.RedisUtils;
 import net.minidev.json.writer.JsonReader;
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,8 +39,15 @@ class ZzxMusicRecommendationSystemApplicationTests {
     private StringRedisTemplate stringRedisTemplate;//RedisTemplate 的子类
 
     @Test
-    void contextLoads() {
+    void contextLoads() throws Exception {
+        File file = new File("src/main/resources/mp3/喜欢你.mp3");
+        AudioFile audioFile = AudioFileIO.read(file);
+        Tag tag = audioFile.getTag();
+        String artist = tag.getFirst(FieldKey.ARTIST);
+        String title = tag.getFirst(FieldKey.TITLE);
+        MusicUtils.getMusicInfo("src/main/resources/mp3/喜欢你.mp3");
     }
+
 
     @Test
     void testRedisTemplate(){
