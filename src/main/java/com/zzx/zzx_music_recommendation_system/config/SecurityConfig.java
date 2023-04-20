@@ -56,8 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             @Override
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
                 UserInfo userInfo = userInfoDao.getOne( new QueryWrapper<UserInfo>().lambda()
-                        .eq(UserInfo::getIsDelete, 1)
-                        .eq(UserInfo::getUserEmail, username));
+                        .eq(UserInfo::getIsDelete, 1));
                 if (null != userInfo) {
                     return User.withUsername(username)
                             .roles(UserRoleEnum.getMessageByCode(userInfo.getUserType()))
@@ -101,24 +100,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         //放行静态资源
         web.ignoring().antMatchers(
-                "/**",
-                "sys-exeception/callback",
-                "/sys-service/callback",
-                "/usecase/callback",
-                "/sys-user/login",
-                "/sys-user/register",
-                "/sys-user/logout",
-                "/css/**",
-                "/js/**",
-                "/index.html",
-                "/favicon.ico",
-                "/doc.html",
-                "/webjars/**",
-                "/swagger-ui.html",
-                "/swagger-resources/**",
-                "/v2/api-docs/**",
-                "/captcha",
-                "/ws/**");
+                "/**");
     }
 
     @Bean

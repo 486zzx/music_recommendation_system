@@ -129,20 +129,24 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         userInfo.setUserName(reqVO.getUserName());
         userInfo.setUserPassword(new BCryptPasswordEncoder().encode(reqVO.getUserPassword()));
         userInfo.setUserEmail(reqVO.getUserEmail());
-        CommonUtils.fillWhenSave(userInfo);
+        CommonUtils.fillWhenSaveNoLogin(userInfo);
         userInfoDao.save(userInfo);
 
         //歌单表(当前播放)
         SongList songList = new SongList();
         songList.setUserId(userInfo.getUserId());
         songList.setSongListType(SongListTypeEnum.NOW_PLAY.getCode());
-        CommonUtils.fillWhenSave(songList);
+        CommonUtils.fillWhenSaveNoLogin(songList);
+        songList.setCreateUserId(userInfo.getUserId());
+        songList.setModifyUserId(userInfo.getUserId());
         songListDao.save(songList);
 
         //用户歌单表
         UserSongList u = new UserSongList();
         u.setSongListId(songList.getSongListId());
-        CommonUtils.fillWhenSave(u);
+        CommonUtils.fillWhenSaveNoLogin(u);
+        u.setCreateUserId(userInfo.getUserId());
+        u.setModifyUserId(userInfo.getUserId());
         userSongListDao.save(u);
     }
 

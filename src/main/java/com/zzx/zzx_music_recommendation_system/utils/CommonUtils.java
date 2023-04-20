@@ -14,13 +14,25 @@ public class CommonUtils {
 
     public static <T> void fillWhenSave(T t) {
         try {
-            Field gmtCreated = t.getClass().getDeclaredField("gmtCreated");
+            fillWhenSaveNoLogin(t);
             Field createUserId = t.getClass().getDeclaredField("createUserId");
-            gmtCreated.setAccessible(true);
             createUserId.setAccessible(true);
+            createUserId.set(t, UserInfoUtil.getUserId());
+            Field modifyUserId = t.getClass().getDeclaredField("modifyUserId");
+            modifyUserId.setAccessible(true);
+            modifyUserId.set(t, UserInfoUtil.getUserId());
+        } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static <T> void fillWhenSaveNoLogin(T t) {
+        try {
+            Field gmtCreated = t.getClass().getDeclaredField("gmtCreated");
+            gmtCreated.setAccessible(true);
             gmtCreated.set(t, LocalDateTime.now());
-            createUserId.set(t, UserInfoUtil.getUserInfo());
-            fillWhenUpdate(t);
+            fillWhenUpdateNoLogin(t);
         } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -29,16 +41,30 @@ public class CommonUtils {
 
     public static <T> void fillWhenUpdate(T t) {
         try {
-            Field gmtModified = t.getClass().getDeclaredField("gmtModified");
+            fillWhenUpdateNoLogin(t);
             Field modifyUserId = t.getClass().getDeclaredField("modifyUserId");
-            gmtModified.setAccessible(true);
             modifyUserId.setAccessible(true);
-            gmtModified.set(t, LocalDateTime.now());
-            modifyUserId.set(t, UserInfoUtil.getUserInfo());
+            modifyUserId.set(t, UserInfoUtil.getUserId());
         } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
             e.printStackTrace();
         }
 
     }
+
+    public static <T> void fillWhenUpdateNoLogin(T t) {
+        try {
+            Field gmtModified = t.getClass().getDeclaredField("gmtModified");
+            Field isDelete = t.getClass().getDeclaredField("isDelete");
+            gmtModified.setAccessible(true);
+            isDelete.setAccessible(true);
+            gmtModified.set(t, LocalDateTime.now());
+            isDelete.set(t, 1);
+        } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
 
 }

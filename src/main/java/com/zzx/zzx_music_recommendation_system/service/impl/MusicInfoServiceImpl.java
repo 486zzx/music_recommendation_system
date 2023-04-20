@@ -86,8 +86,7 @@ public class MusicInfoServiceImpl extends ServiceImpl<MusicInfoMapper, MusicInfo
         resVO.setDownloadTimes(map1.get(SongListTypeEnum.DOWNLOAD.getCode()));
 
         List<CommentInfo> commentInfos = commentInfoDao.list(new QueryWrapper<CommentInfo>().lambda()
-                .eq(CommentInfo::getMusicId, musicId)
-                .eq(CommentInfo::getIsDelete, 1));
+                .eq(CommentInfo::getMusicId, musicId));
         List<CommentVO> commentVOS = BeanUtil.copyToList(commentInfos, CommentVO.class);
         //没有父节点的
         List<CommentVO> resCommentVOS = commentVOS.stream().filter(l -> l.getFatherId() == null).collect(Collectors.toList());

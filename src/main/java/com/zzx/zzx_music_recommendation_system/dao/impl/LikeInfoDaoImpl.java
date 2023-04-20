@@ -39,8 +39,7 @@ public class LikeInfoDaoImpl extends ServiceImpl<LikeInfoMapper, LikeInfo> imple
     @Override
     public Map<Integer, Long> getTypeCountMap(Long musicId) {
         return list(new QueryWrapper<LikeInfo>().lambda()
-                        .eq(LikeInfo::getMusicId, musicId)
-                        .eq(LikeInfo::getIsDelete, 1))
+                        .eq(LikeInfo::getMusicId, musicId))
                 .stream()
                 .collect(Collectors.groupingBy(LikeInfo::getLikeType, Collectors.counting()));
     }

@@ -3,6 +3,9 @@ package com.zzx.zzx_music_recommendation_system.service;
 import com.zzx.zzx_music_recommendation_system.entity.LikeInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zzx.zzx_music_recommendation_system.entity.MusicInfo;
+import com.zzx.zzx_music_recommendation_system.enums.SongListTypeEnum;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * <p>
@@ -18,8 +21,10 @@ public interface LikeInfoService extends IService<LikeInfo> {
 
     boolean updateDayRank();
 
-    MusicInfo saveLikeInfo(Long musicId);
+    MusicInfo saveLikeInfo(Long musicId, SongListTypeEnum songListTypeEnum);
 
+    MusicInfo saveDownloadLikeInfo(Long musicId, HttpServletResponse response);
 
+    void deleteLikeInfo(Long musicId);
 
 }

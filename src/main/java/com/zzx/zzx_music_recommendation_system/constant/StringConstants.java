@@ -27,5 +27,16 @@ public class StringConstants {
 
     public static final String DEFAULT = "default";
 
+    public static final String IP = "47.109.76.26";
+
+    public static final String PORT = "22";
+
+    public static final String ROOT = "root";
+
+    public static final String PASSWORD = "djg.d9kjh.6fhg4fh";
+
+    public static final String REMOTE_ADDRESS = "/root/mydirectory/music";
+
+    public static final String LOCAL_ADDRESS = "D:\\learn\\JavaProject\\zzx_music_recommendation_system\\src\\main\\resources\\mp3";
 
 }
