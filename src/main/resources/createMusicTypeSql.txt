@@ -1,0 +1,49 @@
+-- 插入 type_name = 'blues' 的记录
+INSERT INTO music_type (type_id, father_type_id, type_name, create_user_id, modify_user_id, gmt_created, gmt_modified, value1, value2, value3, is_delete)
+VALUES
+    (1, NULL, 'blues', 1649015863756234754, 1649015863756234754, '2023-04-19 09:00:00', '2023-04-19 09:00:00', NULL, NULL, NULL, 1);
+
+-- 插入 type_name = 'classical' 的记录
+INSERT INTO music_type (type_id, father_type_id, type_name, create_user_id, modify_user_id, gmt_created, gmt_modified, value1, value2, value3, is_delete)
+VALUES
+    (2, NULL, 'classical', 1649015863756234754, 1649015863756234754, '2023-04-19 09:00:00', '2023-04-19 09:00:00', NULL, NULL, NULL, 1);
+
+-- 插入 type_name = 'country' 的记录
+INSERT INTO music_type (type_id, father_type_id, type_name, create_user_id, modify_user_id, gmt_created, gmt_modified, value1, value2, value3, is_delete)
+VALUES
+    (3, NULL, 'country', 1649015863756234754, 1649015863756234754, '2023-04-19 09:00:00', '2023-04-19 09:00:00', NULL, NULL, NULL, 1);
+
+-- 插入 type_name = 'disco' 的记录
+INSERT INTO music_type (type_id, father_type_id, type_name, create_user_id, modify_user_id, gmt_created, gmt_modified, value1, value2, value3, is_delete)
+VALUES
+    (4, NULL, 'disco', 1649015863756234754, 1649015863756234754, '2023-04-19 09:00:00', '2023-04-19 09:00:00', NULL, NULL, NULL, 1);
+
+-- 插入 type_name = 'hiphop' 的记录
+INSERT INTO music_type (type_id, father_type_id, type_name, create_user_id, modify_user_id, gmt_created, gmt_modified, value1, value2, value3, is_delete)
+VALUES
+    (5, NULL, 'hiphop', 1649015863756234754, 1649015863756234754, '2023-04-19 09:00:00', '2023-04-19 09:00:00', NULL, NULL, NULL, 1);
+
+-- 插入 type_name = 'jazz' 的记录
+INSERT INTO music_type (type_id, father_type_id, type_name, create_user_id, modify_user_id, gmt_created, gmt_modified, value1, value2, value3, is_delete)
+VALUES
+(6, NULL, 'jazz', 1649015863756234754, 1649015863756234754, '2023-04-19 09:00:00', '2023-04-19 09:00:00', NULL, NULL, NULL, 1);
+
+-- 插入 type_name = 'metal' 的记录
+INSERT INTO music_type (type_id, father_type_id, type_name, create_user_id, modify_user_id, gmt_created, gmt_modified, value1, value2, value3, is_delete)
+VALUES
+(7, NULL, 'metal', 1649015863756234754, 1649015863756234754, '2023-04-19 09:00:00', '2023-04-19 09:00:00', NULL, NULL, NULL, 1);
+
+-- 插入 type_name = 'pop' 的记录
+INSERT INTO music_type (type_id, father_type_id, type_name, create_user_id, modify_user_id, gmt_created, gmt_modified, value1, value2, value3, is_delete)
+VALUES
+(8, NULL, 'pop', 1649015863756234754, 1649015863756234754, '2023-04-19 09:00:00', '2023-04-19 09:00:00', NULL, NULL, NULL, 1);
+
+-- 插入 type_name = 'reggae' 的记录
+INSERT INTO music_type (type_id, father_type_id, type_name, create_user_id, modify_user_id, gmt_created, gmt_modified, value1, value2, value3, is_delete)
+VALUES
+(9, NULL, 'reggae', 1649015863756234754, 1649015863756234754, '2023-04-19 09:00:00', '2023-04-19 09:00:00', NULL, NULL, NULL, 1);
+
+-- 插入 type_name = 'rock' 的记录
+INSERT INTO music_type (type_id, father_type_id, type_name, create_user_id, modify_user_id, gmt_created, gmt_modified, value1, value2, value3, is_delete)
+VALUES
+(10, NULL, 'rock', 1649015863756234754, 1649015863756234754, '2023-04-19 09:00:00', '2023-04-19 09:00:00', NULL, NULL, NULL, 1);

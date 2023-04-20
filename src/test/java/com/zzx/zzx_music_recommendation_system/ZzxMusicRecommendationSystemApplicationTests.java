@@ -64,13 +64,13 @@ class ZzxMusicRecommendationSystemApplicationTests {
     }
 
 
-    public static void main(String[] args) {
-        String s = MailUtil.send("1960104079@qq.com", "ces", "content", false);
-        String s1 = MailUtil.send("1960104adfg.com", "ces", "content", false);
-
-        System.out.println(s);
-        System.out.println(s1);
-    }
+//    public static void main(String[] args) {
+//        String s = MailUtil.send("1960104079@qq.com", "ces", "content", false);
+//        String s1 = MailUtil.send("1960104adfg.com", "ces", "content", false);
+//
+//        System.out.println(s);
+//        System.out.println(s1);
+//    }
 
     // 操作字符串类型
 //    @Test
@@ -93,7 +93,7 @@ class ZzxMusicRecommendationSystemApplicationTests {
 //
 //    }
 
-    /*public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
         Cifar10AudioClassifier classifier = new Cifar10AudioClassifier();
         classifier.load_model();
 
@@ -109,6 +109,6 @@ class ZzxMusicRecommendationSystemApplicationTests {
 
             System.out.println("Predicted: " + label);
         }
-    }*/
+    }
 
 }

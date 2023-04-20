@@ -14,14 +14,14 @@ import java.util.function.Consumer;
  */
 public class UserKnn {
 
-    public static void getKnn(List<Long> userIdList, final Map<Long, float[]> user2songRatingMatrix, final int k) {
+    public static void getKnn(List<Long> userIdList, Map<Long,Map<Long, Float>> user2songRatingMatrix, int k) {
         Map<Long, Long[]> nearNeighbor = getNearestNeighbor(userIdList, user2songRatingMatrix, k);
         //预测评分（根据最近k个邻居，并且邻居同样打分的音乐评分来预测当前用户对歌曲的评分）
-        user2songRatingMatrix.forEach(new BiConsumer<Long, float[]>() {
+        user2songRatingMatrix.forEach(new BiConsumer<Long, Map<Long, Float>>() {
             @Override
-            public void accept(Long aLong, float[] floats) {
-                for (int i = 0; i < floats.length; i++) {
-                    if (floats[i] > 0.01f) {
+            public void accept(Long aLong, Map<Long, Float> floats) {
+                for (Map.Entry<Long, Float> entry : floats.entrySet()) {
+                    if (entry.getValue() > 0.01f) {
                         continue;
                     }
                     BigDecimal score = new BigDecimal("0");
@@ -29,15 +29,16 @@ public class UserKnn {
                     Long[] neighbors = nearNeighbor.get(aLong);
                     for (Long neighbor : neighbors) {
                         float nowScore;
+                        Map<Long, Float> map = user2songRatingMatrix.get(neighbor);
                         //邻居有评分的话继续
-                        if (Objects.nonNull(neighbor) && (nowScore = user2songRatingMatrix.get(neighbor)[i]) > 0.01f) {
+                        if (Objects.nonNull(neighbor) && (nowScore = map.getOrDefault(entry.getKey(), 0f)) > 0.01f) {
                             times++;
                             //加上邻居对这首歌的评分
                             score = score.add(new BigDecimal(String.valueOf(nowScore)));
                         }
                     }
                     if (times != 0) {
-                        floats[i] = score.divide(new BigDecimal(String.valueOf(times))).floatValue();
+                        floats.put(entry.getKey(), score.divide(new BigDecimal(String.valueOf(times))).floatValue());
                     }
                 }
             }
@@ -45,7 +46,7 @@ public class UserKnn {
 
     }
 
-    private static Map<Long, Long[]> getNearestNeighbor(List<Long> userIdList, final Map<Long, float[]> user2songRatingMatrix, final int k) {
+    private static Map<Long, Long[]> getNearestNeighbor(List<Long> userIdList, Map<Long,Map<Long, Float>> user2songRatingMatrix, int k) {
         // TODO Auto-generated method stub
         final Map<Long,Long[]> userKNNMatrix= new HashMap<>();
         userIdList.forEach(new Consumer<Long>() {
@@ -61,14 +62,14 @@ public class UserKnn {
                     }
                 });
                 //获取K Nearest Neighbors
-                user2songRatingMatrix.forEach(new BiConsumer<Long, float[]>() {
+                user2songRatingMatrix.forEach(new BiConsumer<Long, Map<Long, Float>>() {
 
-                    public void accept(Long otherUserId, float[] userRatingArray) {
+                    public void accept(Long otherUserId, Map<Long, Float> userRatingArray) {
                         // TODO Auto-generated method stub
                         //排除自己
                         if(otherUserId!=curUserId) {
                             //计算当前用户和其他用户的相似性
-                            float similarity = calculateSimilarity(user2songRatingMatrix.get(curUserId),user2songRatingMatrix.get(otherUserId));
+                            float similarity = calculateSimilarity(user2songRatingMatrix.get(curUserId), userRatingArray);
                             UserSimilarity userSimilarity = new UserSimilarity();
                             userSimilarity.setUserId(otherUserId);
                             userSimilarity.setSimilarity(similarity);
@@ -102,20 +103,17 @@ public class UserKnn {
      * @param otherRating
      * @return
      */
-    private static float calculateSimilarity(float[] curRating, float[] otherRating) {
+    private static float calculateSimilarity(Map<Long, Float> curRating, Map<Long, Float> otherRating) {
         // TODO Auto-generated method stub
         float similarity=0f;
-        int len=curRating.length;
         int cnt=0;
-        for(int i=0;i<len;i++) {
-            //根据被当前用户“评分”了的项目来计算相似度
-            if(curRating[i]>0.01f) {
-                similarity+=Math.pow(curRating[i]-otherRating[i], 2);
+        for (Long curMusicId : curRating.keySet()) {
+            if(curRating.getOrDefault(curMusicId, 0f) > 0.01f) {
+                similarity+=Math.pow(curRating.getOrDefault(curMusicId, 0f) - otherRating.getOrDefault(curMusicId,0f), 2);
                 cnt++;
             }
         }
         similarity/=(cnt>0?cnt:1);
-
         return similarity;
     }
 }

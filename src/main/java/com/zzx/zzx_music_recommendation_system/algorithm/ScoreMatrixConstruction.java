@@ -38,10 +38,10 @@ public class ScoreMatrixConstruction {
      * @return
      * 用户Id-歌曲Id 频率矩阵
      */
-    public static Map<Long, float[]> getFrequencyMatrix(List<Long> userIdList, final List<Long> songIdList,
+    public static Map<Long,Map<Long, Float>> getFrequencyMatrix(List<Long> userIdList, List<Long> songIdList,
                                                            List<LikeInfo> downloadList, List<LikeInfo> playList, List<LikeInfo> collectionList) {
         // TODO Auto-generated method stub
-        final Map<Long,float[]> user2songRatingMatrix=new HashMap<>();
+        final Map<Long,Map<Long, Float>> user2songRatingMatrix=new HashMap<>();
         final int songLen=songIdList.size();
         //获取用户-歌曲 下载映射
         final Map<Long,Map<Long, Set<Long>>> userId2songIdDownloadMap=getUserId2songIdRecordMap(downloadList,false);
@@ -52,8 +52,7 @@ public class ScoreMatrixConstruction {
 
         userIdList.forEach(userId -> {
             // TODO Auto-generated method stub
-            float[] curUserRatingArray=new float[songLen];
-            int songIndex=0;
+            Map<Long, Float> curUserRatingArray = new HashMap<>();
             //处理每一首歌曲
             for(Long songId:songIdList) {
                 /**
@@ -61,7 +60,7 @@ public class ScoreMatrixConstruction {
                  */
                 if(userId2songIdDownloadMap.get(userId)!=null && userId2songIdDownloadMap.get(userId).get(FLAG).contains(songId)) {
                     //当前用户下载过的歌曲
-                    curUserRatingArray[songIndex]+=DOWNLOAD_SCORE;
+                    curUserRatingArray.put(songId, curUserRatingArray.getOrDefault(songId, 0f) + DOWNLOAD_SCORE);
                 }
 
                 /**
@@ -69,7 +68,7 @@ public class ScoreMatrixConstruction {
                  */
                 if(userId2songIdCollectionMap.get(userId)!=null && userId2songIdCollectionMap.get(userId).get(FLAG).contains(songId)) {
                     //当前用户收藏的歌曲
-                    curUserRatingArray[songIndex]+=COLLECTION_SCORE;
+                    curUserRatingArray.put(songId, curUserRatingArray.getOrDefault(songId, 0f) + COLLECTION_SCORE);
                 }
 
                 /**
@@ -78,17 +77,15 @@ public class ScoreMatrixConstruction {
                 if(userId2songIdPlayMap.get(userId)!=null && userId2songIdPlayMap.get(userId).get(FLAG).contains(songId)) {
                     //表示分数
                     long socre=userId2songIdPlayMap.get(userId).get(songId).iterator().next() / PLAY_TIME;
-                    curUserRatingArray[songIndex]+=PLAY_SCORE * socre;
+                    curUserRatingArray.put(songId, curUserRatingArray.getOrDefault(songId, 0f) + PLAY_SCORE * socre);
                 }
 
                 /**
                  * 处理最大得分，超过最大得分，记为最大得分
                  */
-                if(curUserRatingArray[songIndex]>MAX_SCORE) {
-                    curUserRatingArray[songIndex]=MAX_SCORE;
+                if(curUserRatingArray.getOrDefault(songId, 0f)>MAX_SCORE) {
+                    curUserRatingArray.put(songId, MAX_SCORE);
                 }
-                //处理下一首歌
-                songIndex++;
             }
             //处理完一个用户
             user2songRatingMatrix.put(userId, curUserRatingArray);
