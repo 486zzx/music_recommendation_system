@@ -13,6 +13,8 @@ public class StringConstants {
 
     public static final String LIMIT_1 = "LIMIT 1";
 
+    public static final String LIMIT_20 = "LIMIT 20";
+
     public static final String LINE_STRING = "-";
 
     public static final String IN_LINE_STRING = "_";

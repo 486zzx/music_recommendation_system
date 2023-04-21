@@ -28,15 +28,14 @@ public class RecommendController {
     @Autowired
     private RecommendService recommendService;
 
-//    @ApiOperation("获得音乐标签")
-//    @PostMapping(value = "/getMusicType")
-//    public ResVO<List<MusicType>> getMusicType() {
-//        try {
-//            musicTypeService.getMusicType();
-//            return ResVO.ok();
-//        } catch (MyException e) {
-//            return ResVO.fail(e.getMessage());
-//        }
-//    }
+    @ApiOperation("获得用户的个性化推荐音乐")
+    @PostMapping(value = "/getRecommendMusic")
+    public ResVO<List<Long>> getRecommendMusic() {
+        try {
+            return ResVO.ok(recommendService.getRecommendMusic());
+        } catch (MyException e) {
+            return ResVO.fail(e.getMessage());
+        }
+    }
 
 }
