@@ -37,7 +37,7 @@ public class Recommend implements Serializable {
     private Long musicId;
 
     @TableField("socre")
-    private Integer socre;
+    private Float socre;
 
     @TableField("recommend_type")
     private Integer recommendType;

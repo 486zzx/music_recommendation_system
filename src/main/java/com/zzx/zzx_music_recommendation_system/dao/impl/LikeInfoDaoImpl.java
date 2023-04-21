@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zzx.zzx_music_recommendation_system.dao.LikeInfoDao;
 import com.zzx.zzx_music_recommendation_system.entity.LikeInfo;
+import com.zzx.zzx_music_recommendation_system.enums.SongListTypeEnum;
 import com.zzx.zzx_music_recommendation_system.mapper.LikeInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,22 @@ public class LikeInfoDaoImpl extends ServiceImpl<LikeInfoMapper, LikeInfo> imple
                         .eq(LikeInfo::getMusicId, musicId))
                 .stream()
                 .collect(Collectors.groupingBy(LikeInfo::getLikeType, Collectors.counting()));
+    }
+
+    @Override
+    public Integer getPlayCount(Long userId) {
+        List<LikeInfo> list = list(new QueryWrapper<LikeInfo>().lambda()
+                .eq(LikeInfo::getUserId, userId)
+                .eq(LikeInfo::getLikeType, SongListTypeEnum.PLAY.getCode()));
+        return list.size();
+
+    }
+
+    @Override
+    public Integer getAllPlayCount() {
+        List<LikeInfo> list = list(new QueryWrapper<LikeInfo>().lambda()
+                .eq(LikeInfo::getLikeType, SongListTypeEnum.PLAY.getCode()));
+        return list.size();
     }
 
 

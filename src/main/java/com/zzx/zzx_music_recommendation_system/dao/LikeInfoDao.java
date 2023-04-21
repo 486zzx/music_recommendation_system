@@ -15,4 +15,13 @@ public interface LikeInfoDao extends IService<LikeInfo> {
     List<String> updateDayRank(LocalDateTime startTime, LocalDateTime endTime);
 
     Map<Integer, Long> getTypeCountMap(Long musicId);
+
+    /**
+     * 获得该用户的播放记录
+     * @param userId
+     * @return
+     */
+    Integer getPlayCount(Long userId);
+
+    Integer getAllPlayCount();
 }

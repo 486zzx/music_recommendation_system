@@ -83,7 +83,7 @@ public class UserKnn {
                 //从堆中获取相似性最大的k的邻居
                 for(int i=0;i<k;i++) {
                     UserSimilarity temp = minNumHeap.poll();
-                    if (Objects.isNull(temp)) {
+                    if (Objects.isNull(temp) || temp.getSimilarity() == -1) {
                         break;
                     }
                     knnId[i]=temp.getUserId();
@@ -101,7 +101,7 @@ public class UserKnn {
      * 计算相似度
      * @param curRating
      * @param otherRating
-     * @return
+     * @return 当完全一致返回0，当没有播放记录同样返回0，越小相似度高
      */
     private static float calculateSimilarity(Map<Long, Float> curRating, Map<Long, Float> otherRating) {
         // TODO Auto-generated method stub
@@ -112,6 +112,10 @@ public class UserKnn {
                 similarity+=Math.pow(curRating.getOrDefault(curMusicId, 0f) - otherRating.getOrDefault(curMusicId,0f), 2);
                 cnt++;
             }
+        }
+        //该用户没有对歌曲的操作记录，故不查询他的相似用户，这种情况将返回值设为-1
+        if (cnt == 0) {
+            return -1;
         }
         similarity/=(cnt>0?cnt:1);
         return similarity;
