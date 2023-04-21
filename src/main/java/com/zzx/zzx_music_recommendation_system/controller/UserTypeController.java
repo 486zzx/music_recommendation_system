@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -30,7 +31,7 @@ public class UserTypeController {
 
     @ApiOperation("填写用户喜好标签")
     @PostMapping(value = "/fillUserLikeType")
-    public ResVO<Void> fillUserLikeType(@RequestBody ReqVO<List<Long>> musicTypeIds) {
+    public ResVO<Void> fillUserLikeType(@RequestBody @Valid ReqVO<List<Long>> musicTypeIds) {
         try {
             userTypeService.fillUserLikeType(musicTypeIds.getArgs());
             return ResVO.ok();

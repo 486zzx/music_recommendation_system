@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -40,14 +41,14 @@ public class MusicInfoController {
 
     @ApiOperation("获取歌曲信息")
     @PostMapping(value = "/getRank")
-    public ResVO<List<RankResVO>> getRank(@RequestBody ReqVO<List<Long>> reqVO) {
+    public ResVO<List<RankResVO>> getRank(@RequestBody @Valid ReqVO<List<Long>> reqVO) {
         return ResVO.ok(musicInfoService.getRank(reqVO.getArgs()));
     }
 
 
     @ApiOperation("歌曲详情")
     @PostMapping(value = "/musicDetail")
-    public ResVO<MusicDetailResVO> musicDetail(@RequestBody ReqVO<Long> reqVO) {
+    public ResVO<MusicDetailResVO> musicDetail(@RequestBody @Valid ReqVO<Long> reqVO) {
         try {
             return ResVO.ok(musicInfoService.musicDetail(reqVO.getArgs()));
         } catch (Exception e) {

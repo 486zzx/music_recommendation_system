@@ -3,6 +3,7 @@ package com.zzx.zzx_music_recommendation_system.service;
 import com.zzx.zzx_music_recommendation_system.entity.CommentInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zzx.zzx_music_recommendation_system.entity.MusicType;
+import com.zzx.zzx_music_recommendation_system.vo.GetOrSetCommentReqVO;
 
 import java.util.List;
 
@@ -16,8 +17,8 @@ import java.util.List;
  */
 public interface CommentInfoService extends IService<CommentInfo> {
 
-    void fillUserLikeType(List<Long> list);
+    void setOrUpdateComment(GetOrSetCommentReqVO reqVO);
 
-
+    void deleteComment(Long commentId);
 
 }

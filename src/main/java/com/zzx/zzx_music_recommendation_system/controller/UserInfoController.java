@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class UserInfoController {
 
     @ApiOperation("可以指定参数的API")
     @PostMapping(value = "/getUser")
-    public ResVO<UserInfo> getUser(@RequestBody UserInfo userInfo) {
+    public ResVO<UserInfo> getUser(@RequestBody @Valid UserInfo userInfo) {
         userInfo.setValue1("haha");
         UserInfo userInfo1 = new UserInfo();
         userInfo1.setValue1("dsad");
@@ -58,7 +59,7 @@ public class UserInfoController {
 
     @ApiOperation("发送验证码")
     @PostMapping(value = "/sendValidateCode")
-    public ResVO<Void> sendValidateCode(@RequestBody ReqVO<String> reqVO, HttpServletRequest request) {
+    public ResVO<Void> sendValidateCode(@RequestBody @Valid ReqVO<String> reqVO, HttpServletRequest request) {
         try {
             userInfoService.sendValidateCode(reqVO.getArgs(), request);
             return ResVO.ok();
@@ -69,7 +70,7 @@ public class UserInfoController {
 
     @ApiOperation("注册")
     @PostMapping(value = "/register")
-    public ResVO<Void> register(@RequestBody ReqVO<RegisterReqVO> reqVO) {
+    public ResVO<Void> register(@RequestBody @Valid ReqVO<RegisterReqVO> reqVO) {
         try {
             userInfoService.register(reqVO.getArgs());
             return ResVO.ok();
@@ -80,7 +81,7 @@ public class UserInfoController {
 
     @ApiOperation("登录")
     @PostMapping(value = "/login")
-    public ResVO<String> login(@RequestBody ReqVO<LoginReqVO> reqVO) {
+    public ResVO<String> login(@RequestBody @Valid ReqVO<LoginReqVO> reqVO) {
         try {
             return ResVO.ok(userInfoService.login(reqVO.getArgs()));
         } catch (MyException e) {

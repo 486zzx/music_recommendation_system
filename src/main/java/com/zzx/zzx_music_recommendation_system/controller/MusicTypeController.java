@@ -30,7 +30,7 @@ public class MusicTypeController {
     @Autowired
     private MusicTypeService musicTypeService;
 
-    @ApiOperation("获得音乐标签")
+    @ApiOperation("获得所有音乐标签")
     @PostMapping(value = "/getMusicType")
     public ResVO<List<MusicType>> getMusicType() {
         try {

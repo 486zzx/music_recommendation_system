@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 /**
  * <p>
@@ -32,7 +33,7 @@ public class LikeInfoController {
 
     @ApiOperation("播放音乐")
     @PostMapping("/playMusic")
-    public ResVO<MusicInfo> playMusic(@RequestBody ReqVO<Long> musicId) {
+    public ResVO<MusicInfo> playMusic(@RequestBody @Valid ReqVO<Long> musicId) {
         try {
             return ResVO.ok(likeInfoService.saveLikeInfo(musicId.getArgs(), SongListTypeEnum.PLAY));
         } catch (Exception e) {
@@ -42,7 +43,7 @@ public class LikeInfoController {
 
     @ApiOperation("下载音乐")
     @PostMapping("/downloadMusic")
-    public ResVO<MusicInfo> downloadMusic(@RequestBody ReqVO<Long> musicId, HttpServletResponse response) {
+    public ResVO<MusicInfo> downloadMusic(@RequestBody @Valid ReqVO<Long> musicId, HttpServletResponse response) {
         try {
             return ResVO.ok(likeInfoService.saveDownloadLikeInfo(musicId.getArgs(), response));
         } catch (Exception e) {
@@ -52,7 +53,7 @@ public class LikeInfoController {
 
     @ApiOperation("收藏音乐")
     @PostMapping("/collectMusic")
-    public ResVO<Void> collectMusic(@RequestBody ReqVO<Long> musicId) {
+    public ResVO<Void> collectMusic(@RequestBody @Valid ReqVO<Long> musicId) {
         try {
             likeInfoService.saveLikeInfo(musicId.getArgs(), SongListTypeEnum.LIKE);
             return ResVO.ok();
@@ -63,7 +64,7 @@ public class LikeInfoController {
 
     @ApiOperation("取消收藏")
     @PostMapping("/stopCollect")
-    public ResVO<Void> stopCollect(@RequestBody ReqVO<Long> musicId) {
+    public ResVO<Void> stopCollect(@RequestBody @Valid ReqVO<Long> musicId) {
         try {
             likeInfoService.deleteLikeInfo(musicId.getArgs());
             return ResVO.ok();
