@@ -2,6 +2,7 @@ package com.zzx.zzx_music_recommendation_system.service;
 
 import com.zzx.zzx_music_recommendation_system.entity.MusicSongList;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zzx.zzx_music_recommendation_system.vo.AddOrDeleteMusicToSongListReqVO;
 
 import java.util.List;
 
@@ -18,5 +19,11 @@ public interface MusicSongListService extends IService<MusicSongList> {
     void addMusicToPlayList(List<Long> musicIds);
 
     void deleteMusicFromPlayList(List<Long> musicIds);
+
+    List<Long> getPlayList();
+
+    void addMusicToSongList(AddOrDeleteMusicToSongListReqVO reqVO);
+
+    void deleteMusicFromSongList(AddOrDeleteMusicToSongListReqVO reqVO);
 
 }
