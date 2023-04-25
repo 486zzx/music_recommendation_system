@@ -8,10 +8,7 @@ import com.zzx.zzx_music_recommendation_system.vo.ReqVO;
 import com.zzx.zzx_music_recommendation_system.vo.ResVO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -24,6 +21,7 @@ import javax.validation.Valid;
  * @author zzx
  * @since 2023-03-30
  */
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/zzx_music_recommendation_system/like-info")
 public class LikeInfoController {

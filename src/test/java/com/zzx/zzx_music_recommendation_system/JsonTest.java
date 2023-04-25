@@ -71,10 +71,10 @@ public class JsonTest {
     @Test
     void testRedisTemplate(){
         SshSshdUtils sshSshdUtils = new SshSshdUtils(ip, root, Integer.parseInt(port), password);
-        /*sshSshdUtils.sftpPutFile("D:\\learn\\JavaProject\\zzx_music_recommendation_system\\src\\main\\resources\\mp3\\背包-苏有朋.320.mp3",
-                "/root/mydirectory/music/背包-苏有朋.320.mp3");*/
+        sshSshdUtils.sftpPutFile("D:\\learn\\JavaProject\\zzx_music_recommendation_system\\src\\main\\resources\\mp3\\背包-苏有朋.320.mp3",
+                "/mydirectory/music/背包-苏有朋.320.mp3");
         sshSshdUtils.sftpGetFile("C:\\Users\\34585\\Desktop\\背包-苏有朋.320.mp3",
-                "/root/mydirectory/music/背包-苏有朋.320.mp3");
+                "/mydirectory/music/背包-苏有朋.320.mp3");
 //        SshSshdUtils sshSshdUtils = new SshSshdUtils(ip, root, Integer.parseInt(port), password);
 //
 //

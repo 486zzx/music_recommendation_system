@@ -17,7 +17,11 @@ import java.util.List;
  */
 public interface MusicInfoService extends IService<MusicInfo> {
 
-    List<RankResVO> getRank(List<Long> musicIds);
+    List<RankResVO> getMusics(List<Long> musicIds);
 
     MusicDetailResVO musicDetail(Long musicId);
+
+    List<RankResVO> getRandomMusic();
+
+    List<RankResVO> getLastMusic();
 }

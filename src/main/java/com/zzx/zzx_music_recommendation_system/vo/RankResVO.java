@@ -24,6 +24,8 @@ public class RankResVO {
 
     private String singerId;
 
+    private String singerName;
+
     private String typeIds;
 
     //通过typeIds查找

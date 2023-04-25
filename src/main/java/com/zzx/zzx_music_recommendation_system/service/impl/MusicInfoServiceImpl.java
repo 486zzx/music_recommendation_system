@@ -1,7 +1,9 @@
 package com.zzx.zzx_music_recommendation_system.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.zzx.zzx_music_recommendation_system.constant.StringConstants;
 import com.zzx.zzx_music_recommendation_system.dao.CommentInfoDao;
 import com.zzx.zzx_music_recommendation_system.dao.LikeInfoDao;
 import com.zzx.zzx_music_recommendation_system.dao.MusicInfoDao;
@@ -14,6 +16,7 @@ import com.zzx.zzx_music_recommendation_system.enums.SongListTypeEnum;
 import com.zzx.zzx_music_recommendation_system.mapper.MusicInfoMapper;
 import com.zzx.zzx_music_recommendation_system.service.MusicInfoService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zzx.zzx_music_recommendation_system.service.SingerInfoService;
 import com.zzx.zzx_music_recommendation_system.vo.CommentVO;
 import com.zzx.zzx_music_recommendation_system.vo.MusicDetailResVO;
 import com.zzx.zzx_music_recommendation_system.vo.RankResVO;
@@ -22,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -49,9 +53,16 @@ public class MusicInfoServiceImpl extends ServiceImpl<MusicInfoMapper, MusicInfo
     @Autowired
     private CommentInfoDao commentInfoDao;
 
+    @Autowired
+    private SingerInfoService singerInfoService;
+
     @Override
-    public List<RankResVO> getRank(List<Long> musicIds) {
+    public List<RankResVO> getMusics(List<Long> musicIds) {
         List<RankResVO> resVOS = musicInfoDao.getMusicInfo(musicIds);
+        Map<String, String> singerMap = singerInfoService.getSingerName(resVOS.stream().map(RankResVO::getSingerId).collect(Collectors.toList()));
+        resVOS.forEach(l -> {
+            l.setSingerName(singerMap.get(l.getSingerId()));
+        });
         Map<String, String> map = musicTypeDao.list().stream()
                 .collect(Collectors.toMap(l -> Long.toString(l.getTypeId()), MusicType::getTypeName));
         resVOS.forEach(l -> {
@@ -70,6 +81,13 @@ public class MusicInfoServiceImpl extends ServiceImpl<MusicInfoMapper, MusicInfo
         MusicDetailResVO resVO = new MusicDetailResVO();
         MusicInfo musicInfo = musicInfoDao.getById(musicId);
         BeanUtils.copyProperties(musicInfo, resVO);
+
+        if (StrUtil.isNumeric(resVO.getSingerId())) {
+            String name = singerInfoService.getById(Long.parseLong(resVO.getSingerId())).getSingerName();
+            resVO.setSingerName(name);
+        } else {
+            resVO.setSingerName(resVO.getSingerId());
+        }
 
         Map<String, String> map = musicTypeDao.list().stream()
                 .collect(Collectors.toMap(l -> Long.toString(l.getTypeId()), MusicType::getTypeName));
@@ -103,6 +121,29 @@ public class MusicInfoServiceImpl extends ServiceImpl<MusicInfoMapper, MusicInfo
         });
         resVO.setCommentVOS(resCommentVOS);
         return resVO;
+    }
+
+    @Override
+    public List<RankResVO> getRandomMusic() {
+        List<MusicInfo> list = musicInfoDao.list();
+        if (list == null || list.size() == 0) {
+            return null;
+        }
+        Collections.shuffle(list);
+        List<Long> selectedElements = list.subList(0, Math.min(list.size(), 20)).stream().map(MusicInfo::getMusicId).collect(Collectors.toList());
+        return getMusics(selectedElements);
+    }
+
+    @Override
+    public List<RankResVO> getLastMusic() {
+        List<MusicInfo> list = musicInfoDao.list(new QueryWrapper<MusicInfo>().lambda()
+                .orderByDesc(MusicInfo::getGmtCreated)
+                .last(StringConstants.LIMIT_20));
+        if (list == null || list.size() == 0) {
+            return null;
+        }
+        List<Long> selectedElements = list.stream().map(MusicInfo::getMusicId).collect(Collectors.toList());
+        return getMusics(selectedElements);
     }
 
 }

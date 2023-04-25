@@ -26,6 +26,7 @@ import java.util.List;
  * @author zzx
  * @since 2023-03-30
  */
+@CrossOrigin(origins = "*")
 @Api(tags = "用户管理")
 @RestController
 @RequestMapping("/zzx_music_recommendation_system/user-info")
@@ -39,19 +40,8 @@ public class UserInfoController {
 
     @ApiOperation("可以指定参数的API")
     @PostMapping(value = "/getUser")
-    public ResVO<UserInfo> getUser(@RequestBody @Valid UserInfo userInfo) {
-        userInfo.setValue1("haha");
-        UserInfo userInfo1 = new UserInfo();
-        userInfo1.setValue1("dsad");
-        UserInfo userInfo2 = new UserInfo();
-        userInfo1.setValue2("ddddsad");
-        List<UserInfo> list = new ArrayList<>();
-        list.add(userInfo2);
-        list.add(userInfo1);
-        userInfoService.saveBatch(list);
-        ResVO<UserInfo> resVO = new ResVO<>();
-        resVO.setData(userInfo);
-        return resVO;
+    public ResVO<List<UserInfo>> getUser() {
+        return ResVO.ok(userInfoService.list());
 
     }
 

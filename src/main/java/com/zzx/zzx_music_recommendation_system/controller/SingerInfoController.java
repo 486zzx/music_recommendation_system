@@ -1,5 +1,6 @@
 package com.zzx.zzx_music_recommendation_system.controller;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author zzx
  * @since 2023-03-30
  */
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/zzx_music_recommendation_system/singer-info")
 public class SingerInfoController {
