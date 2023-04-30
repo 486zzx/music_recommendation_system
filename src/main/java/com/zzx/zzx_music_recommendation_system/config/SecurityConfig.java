@@ -56,14 +56,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             @Override
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
                 UserInfo userInfo = userInfoDao.getOne( new QueryWrapper<UserInfo>().lambda()
-                        .eq(UserInfo::getIsDelete, 1));
-                if (null != userInfo) {
-                    return User.withUsername(username)
-                            .roles(UserRoleEnum.getMessageByCode(userInfo.getUserType()))
-                            .password(userInfo.getUserPassword())
-                            .build();
+                        .eq(UserInfo::getIsDelete, 1)
+                        .eq(UserInfo::getUserEmail, username));
+                if (userInfo == null) {
+                    throw new MyException(400, "用户名不正确！");
                 }
-                throw new MyException(400, "用户名或密码不正确！");
+                return userInfo;
             }
         };
     }

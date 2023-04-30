@@ -18,8 +18,10 @@ import org.apache.sshd.sftp.client.SftpClient;
 import org.apache.sshd.sftp.client.impl.DefaultSftpClientFactory;
 import org.apache.sshd.sftp.server.SftpSubsystemFactory;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StopWatch;
 
 
@@ -28,12 +30,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 @SpringBootTest()
 public class JsonTest {
-
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Value("${remote.server.ip}")
     private String ip;
 
@@ -71,10 +76,18 @@ public class JsonTest {
     @Test
     void testRedisTemplate(){
         SshSshdUtils sshSshdUtils = new SshSshdUtils(ip, root, Integer.parseInt(port), password);
-        sshSshdUtils.sftpPutFile("D:\\learn\\JavaProject\\zzx_music_recommendation_system\\src\\main\\resources\\mp3\\背包-苏有朋.320.mp3",
-                "/mydirectory/music/背包-苏有朋.320.mp3");
-        sshSshdUtils.sftpGetFile("C:\\Users\\34585\\Desktop\\背包-苏有朋.320.mp3",
-                "/mydirectory/music/背包-苏有朋.320.mp3");
+        Path path = Paths.get("","src","main","resources", "mp3");
+        List<String> list = new ArrayList<>();
+        try (Stream<Path> stream = Files.walk(path)) {
+            stream.forEach(p -> list.add(String.valueOf(p.getFileName())));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        for (String s : list) {
+            sshSshdUtils.sftpPutFile("D:\\learn\\JavaProject\\zzx_music_recommendation_system\\src\\main\\resources\\mp3\\背包-苏有朋.320.mp3",
+                    "/mydirectory/music/背包-苏有朋.320.mp3");
+        }
+
 //        SshSshdUtils sshSshdUtils = new SshSshdUtils(ip, root, Integer.parseInt(port), password);
 //
 //

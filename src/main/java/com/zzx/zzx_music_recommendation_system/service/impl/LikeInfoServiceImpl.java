@@ -16,6 +16,8 @@ import com.zzx.zzx_music_recommendation_system.utils.DateUtils;
 import com.zzx.zzx_music_recommendation_system.utils.RedisUtils;
 import com.zzx.zzx_music_recommendation_system.utils.SshSshdUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,10 +97,10 @@ public class LikeInfoServiceImpl extends ServiceImpl<LikeInfoMapper, LikeInfo> i
     public MusicInfo saveLikeInfo(Long musicId, SongListTypeEnum songListTypeEnum) {
         MusicInfo musicInfo = musicInfoDao.getById(musicId);
         LikeInfo likeInfo = new LikeInfo();
-        likeInfo.setUserId(UserInfoUtil.getUserId());
+//        likeInfo.setUserId(UserInfoUtil.getUserId());
         likeInfo.setMusicId(musicId);
         likeInfo.setLikeType(songListTypeEnum.getCode());
-        CommonUtils.fillWhenSave(likeInfo);
+//        CommonUtils.fillWhenSave(likeInfo);
         likeInfoDao.save(likeInfo);
         return musicInfo;
     }
@@ -107,11 +109,17 @@ public class LikeInfoServiceImpl extends ServiceImpl<LikeInfoMapper, LikeInfo> i
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.NESTED)
     public MusicInfo saveDownloadLikeInfo(Long musicId, HttpServletResponse response) {
         MusicInfo musicInfo = saveLikeInfo(musicId, SongListTypeEnum.DOWNLOAD);
-
+        response.setContentType("audio/mpeg");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+ musicInfo.getMusicName() + ".mp3");
+        if (musicInfo.getMusicContent() == null) {
+            return musicInfo;
+        }
         SshSshdUtils sshSshdUtils = new SshSshdUtils(IP, ROOT, Integer.parseInt(PORT), PASSWORD);
-        InputStream inputStream = sshSshdUtils.sftpGetFile(musicInfo.getMusicContent());
-        response.setContentType("application/octet-stream");
-        response.setHeader("Content-Disposition", "attachment; filename=music.mp3");
+
+        String[] s = musicInfo.getMusicContent().split("/");
+        String str = "/mydirectory/music" + "/" + s[s.length - 1];
+        InputStream inputStream = sshSshdUtils.sftpGetFile(str);
+
         try (OutputStream outputStream = response.getOutputStream()) {
             byte[] bytes = new byte[1024];
             int len;

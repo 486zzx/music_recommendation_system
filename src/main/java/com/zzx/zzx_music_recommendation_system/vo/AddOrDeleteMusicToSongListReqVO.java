@@ -12,8 +12,8 @@ import java.util.List;
  */
 @Data
 public class AddOrDeleteMusicToSongListReqVO {
-    @NotNull(message = "歌单id不能为空")
-    private Long songListId;
+
+    private List<Long> songListIds;
 
     private List<Long> musicIds;
 }

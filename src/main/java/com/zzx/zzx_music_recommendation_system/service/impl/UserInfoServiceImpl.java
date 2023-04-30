@@ -74,11 +74,9 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
     private LoginUserCache loginUserCache;
 
     @Override
-    public void sendValidateCode(String email, HttpServletRequest request) {
+    public void sendValidateCode(String email) {
         //1.避免重复申请
-        if (tooQuickly(request, 1)) {
-            throw new MyException("邮件发送频率过快");
-        }
+
         //2.验证是否存在
         if (userInfoDao.isEmailExist(email)) {
             throw new MyException("该邮件已存在");

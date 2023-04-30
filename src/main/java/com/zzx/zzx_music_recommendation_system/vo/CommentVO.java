@@ -38,7 +38,11 @@ public class CommentVO {
 
     private String value3;
 
-    private List<CommentVO> commentVOS;
+    private String userValue1;
+
+    private String userName;
+
+//    private List<CommentVO> commentVOS;
 
 
 }

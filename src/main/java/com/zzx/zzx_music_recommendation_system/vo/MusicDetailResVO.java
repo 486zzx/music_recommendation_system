@@ -1,6 +1,7 @@
 package com.zzx.zzx_music_recommendation_system.vo;
 
 import lombok.Data;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -16,6 +17,5 @@ public class MusicDetailResVO extends RankResVO{
     private Long collectTimes;
     private Long downloadTimes;
 
-    private List<CommentVO> commentVOS;
 
 }

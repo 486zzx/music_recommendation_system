@@ -56,10 +56,10 @@ public class ResVO<T> {
         return build(data, ResCodeEnum.SUCCESS);
     }
 
-    public static<T> ResVO<T> ok(String message){
+    /*public static<T> ResVO<T> ok(String message){
         ResVO<T> result = result(true ,message);
         return result;
-    }
+    }*/
 
     public static<T> ResVO<T> fail(String message){
         ResVO<T> result = result(false ,message);

@@ -41,9 +41,10 @@ public class LikeInfoController {
 
     @ApiOperation("下载音乐")
     @PostMapping("/downloadMusic")
-    public ResVO<MusicInfo> downloadMusic(@RequestBody @Valid ReqVO<Long> musicId, HttpServletResponse response) {
+    public ResVO<Void> downloadMusic(@RequestBody @Valid ReqVO<Long> musicId) {
         try {
-            return ResVO.ok(likeInfoService.saveDownloadLikeInfo(musicId.getArgs(), response));
+            likeInfoService.saveLikeInfo(musicId.getArgs(), SongListTypeEnum.DOWNLOAD);
+            return ResVO.ok();
         } catch (Exception e) {
             return ResVO.fail(e.getMessage());
         }

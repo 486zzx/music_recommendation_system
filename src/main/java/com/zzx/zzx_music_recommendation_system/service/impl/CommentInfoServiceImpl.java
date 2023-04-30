@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.zzx.zzx_music_recommendation_system.dao.CommentInfoDao;
 import com.zzx.zzx_music_recommendation_system.entity.CommentInfo;
 import com.zzx.zzx_music_recommendation_system.entity.MusicType;
+import com.zzx.zzx_music_recommendation_system.login.UserInfoUtil;
 import com.zzx.zzx_music_recommendation_system.mapper.CommentInfoMapper;
 import com.zzx.zzx_music_recommendation_system.service.CommentInfoService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -35,9 +36,11 @@ public class CommentInfoServiceImpl extends ServiceImpl<CommentInfoMapper, Comme
         CommentInfo commentInfo = new CommentInfo();
         BeanUtil.copyProperties(reqVO, commentInfo);
         if (Objects.isNull(commentInfo.getCommentId())) {
+            commentInfo.setUserId(UserInfoUtil.getUserId());
             CommonUtils.fillWhenSave(commentInfo);
             commentInfoDao.save(commentInfo);
         } else {
+            commentInfo.setUserId(UserInfoUtil.getUserId());
             CommonUtils.fillWhenUpdate(commentInfo);
             commentInfoDao.updateById(commentInfo);
         }

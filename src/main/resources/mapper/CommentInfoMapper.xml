@@ -17,4 +17,12 @@
         <result column="is_delete" property="isDelete" />
     </resultMap>
 
+    <select id="queryForPage" resultType="com.zzx.zzx_music_recommendation_system.vo.CommentVO">
+        SELECT A.*, U.value1 AS userValue1, U.user_name AS userName
+        FROM comment_info A
+                 LEFT JOIN user_info U on A.user_id = U.user_id
+        WHERE A.music_id = #{musicId}
+          AND A.is_delete = 1
+        ORDER BY A.gmt_created DESC
+    </select>
 </mapper>

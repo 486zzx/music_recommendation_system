@@ -53,9 +53,10 @@ public class SongListServiceImpl extends ServiceImpl<SongListMapper, SongList> i
 
     @Override
     public List<SongList> getAllSongList() {
-        return list(new QueryWrapper<SongList>().lambda()
+        List<SongList> songLists = list(new QueryWrapper<SongList>().lambda()
                 .eq(SongList::getSongListType, SongListTypeEnum.COMMON_SONG_LIST.getCode())
                 .eq(SongList::getUserId, UserInfoUtil.getUserId()));
+        return songLists;
     }
 
     @Override

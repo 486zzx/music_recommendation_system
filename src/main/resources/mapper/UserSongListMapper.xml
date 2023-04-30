@@ -4,17 +4,22 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.zzx.zzx_music_recommendation_system.entity.UserSongList">
-        <id column="user_song_list_id" property="userSongListId" />
-        <result column="user_id" property="userId" />
-        <result column="song_list_id" property="songListId" />
-        <result column="create_user_id" property="createUserId" />
-        <result column="modify_user_id" property="modifyUserId" />
-        <result column="gmt_created" property="gmtCreated" />
-        <result column="gmt_modified" property="gmtModified" />
-        <result column="value1" property="value1" />
-        <result column="value2" property="value2" />
-        <result column="value3" property="value3" />
-        <result column="is_delete" property="isDelete" />
+        <id column="user_song_list_id" property="userSongListId"/>
+        <result column="user_id" property="userId"/>
+        <result column="song_list_id" property="songListId"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="modify_user_id" property="modifyUserId"/>
+        <result column="gmt_created" property="gmtCreated"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="value1" property="value1"/>
+        <result column="value2" property="value2"/>
+        <result column="value3" property="value3"/>
+        <result column="is_delete" property="isDelete"/>
     </resultMap>
+    <select id="getHotSongList" resultType="com.zzx.zzx_music_recommendation_system.vo.GetHotSongListResVO">
+        SELECT A.song_list_id, COUNT(A.user_song_list_id) AS collectNum
+        FROM user_song_list A
+        GROUP BY A.song_list_id
+    </select>
 
 </mapper>

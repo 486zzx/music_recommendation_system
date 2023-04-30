@@ -77,30 +77,36 @@ public class MusicSongListServiceImpl extends ServiceImpl<MusicSongListMapper, M
     }
 
     @Override
+    @Transactional(propagation = Propagation.NESTED)
     public void addMusicToSongList(AddOrDeleteMusicToSongListReqVO reqVO) {
-        if (reqVO.getMusicIds() == null || reqVO.getMusicIds().size() < 1) {
-            return;
-        }
-        //查看已经存在的歌
-        List<Long> existMusics = musicSongListDao.getExistSongs(reqVO.getSongListId());
-        List<Long> musics = reqVO.getMusicIds();
-        musics.removeAll(existMusics);
+        for (Long SongListId : reqVO.getSongListIds()) {
+            if (reqVO.getMusicIds() == null || reqVO.getMusicIds().size() < 1) {
+                return;
+            }
+            //查看已经存在的歌
+            List<Long> existMusics = musicSongListDao.getExistSongs(SongListId);
+            List<Long> musics = reqVO.getMusicIds();
+            musics.removeAll(existMusics);
 
-        List<MusicSongList> musicSongListList = musics.stream().map(l -> {
-            MusicSongList musicSongList = new MusicSongList();
-            musicSongList.setMusicId(l);
-            musicSongList.setSongListId(reqVO.getSongListId());
-            CommonUtils.fillWhenSave(musicSongList);
-            return musicSongList;
-        }).collect(Collectors.toList());
-        musicSongListDao.saveBatch(musicSongListList);
+            List<MusicSongList> musicSongListList = musics.stream().map(l -> {
+                MusicSongList musicSongList = new MusicSongList();
+                musicSongList.setMusicId(l);
+                musicSongList.setSongListId(SongListId);
+                CommonUtils.fillWhenSave(musicSongList);
+                return musicSongList;
+            }).collect(Collectors.toList());
+            musicSongListDao.saveBatch(musicSongListList);
+        }
     }
 
     @Override
+    @Transactional(propagation = Propagation.NESTED)
     public void deleteMusicFromSongList(AddOrDeleteMusicToSongListReqVO reqVO) {
         //查看已经存在的歌
-        List<Long> existMusics = musicSongListDao.getExistSongs(reqVO.getSongListId());
-        reqVO.getMusicIds().removeAll(existMusics);
-        musicSongListDao.removeByIds(reqVO.getMusicIds());
+        for (Long songListId : reqVO.getSongListIds()) {
+            List<Long> existMusics = musicSongListDao.getExistSongs(songListId);
+            reqVO.getMusicIds().removeAll(existMusics);
+            musicSongListDao.removeByIds(reqVO.getMusicIds());
+        }
     }
 }

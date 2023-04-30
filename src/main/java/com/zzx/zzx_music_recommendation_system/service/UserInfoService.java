@@ -21,7 +21,7 @@ public interface UserInfoService extends IService<UserInfo> {
      * 发送邮箱验证码
      * @param email
      */
-    void sendValidateCode(String email, HttpServletRequest request);
+    void sendValidateCode(String email);
 
     /**
      * 避免重复发送，设置发送间隔

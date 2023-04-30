@@ -54,15 +54,10 @@ public class UserInfoUtil {
 
         // 从Bearer 获取
         String authorization = request.getHeader("Authorization");
-        if (!StringUtils.hasText(authorization)) {
+        if (!StringUtils.hasText(authorization) || "null".equals(authorization)) {
             return null;
         }
-        int index = authorization.indexOf("Bearer ");
-        if (index == -1) {
-            // 未找到
-            return null;
-        }
-        return authorization.substring(index + 7).trim();
+        return authorization.trim();
     }
 }
 

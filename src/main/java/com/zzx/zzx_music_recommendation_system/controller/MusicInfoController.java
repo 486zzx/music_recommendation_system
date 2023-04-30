@@ -1,19 +1,17 @@
 package com.zzx.zzx_music_recommendation_system.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.zzx.zzx_music_recommendation_system.entity.MusicInfo;
 import com.zzx.zzx_music_recommendation_system.service.LikeInfoService;
 import com.zzx.zzx_music_recommendation_system.service.MusicInfoService;
 import com.zzx.zzx_music_recommendation_system.service.SingerInfoService;
 import com.zzx.zzx_music_recommendation_system.utils.DateUtils;
 import com.zzx.zzx_music_recommendation_system.utils.RedisUtils;
-import com.zzx.zzx_music_recommendation_system.vo.MusicDetailResVO;
-import com.zzx.zzx_music_recommendation_system.vo.RankResVO;
-import com.zzx.zzx_music_recommendation_system.vo.ReqVO;
-import com.zzx.zzx_music_recommendation_system.vo.ResVO;
+import com.zzx.zzx_music_recommendation_system.vo.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import top.yumbo.util.music.musicImpl.netease.NeteaseCloudMusicInfo;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -99,6 +97,16 @@ public class MusicInfoController {
         }
     }
 
+    @ApiOperation("获取评论")
+    @PostMapping(value = "/getComments")
+    public ResVO<PageVO<CommentVO>> getComments(@RequestBody @Valid ReqVO<GetCommentsReqVO> reqVO) {
+        try {
+            return ResVO.ok(musicInfoService.getComments(reqVO.getArgs()));
+        } catch (Exception e) {
+            return ResVO.fail(e.getMessage());
+        }
+    }
+
     @ApiOperation("最新歌曲")
     @PostMapping(value = "/getLastMusic")
     public ResVO<List<RankResVO>> getLastMusic() {
@@ -107,6 +115,16 @@ public class MusicInfoController {
         } catch (Exception e) {
             return ResVO.fail(e.getMessage());
         }
+    }
+
+    @ApiOperation("网易云轮播图")
+    @PostMapping(value = "/banner")
+    public JSONObject banner() {
+        final NeteaseCloudMusicInfo neteaseCloudMusicInfo = new NeteaseCloudMusicInfo();// 得到封装网易云音乐信息的工具类
+        final JSONObject jsonObject = new JSONObject();
+        jsonObject.put("type","0");
+        final JSONObject login = neteaseCloudMusicInfo.banner(jsonObject);
+        return login;
     }
 
 }

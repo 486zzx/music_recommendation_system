@@ -41,10 +41,12 @@ public class SingerInfoServiceImpl extends ServiceImpl<SingerInfoMapper, SingerI
                 res.put(l, l);
             }
         });
-        Map<String, String> map = singerInfoDao.list(new QueryWrapper<SingerInfo>().lambda()
-                .in(SingerInfo::getSingerId, searchList))
-                .stream().collect(Collectors.toMap(l -> String.valueOf(l.getSingerId()), SingerInfo::getSingerName));
-        res.putAll(map);
+        if (searchList.size() > 0) {
+            Map<String, String> map = singerInfoDao.list(new QueryWrapper<SingerInfo>().lambda()
+                            .in(SingerInfo::getSingerId, searchList))
+                    .stream().collect(Collectors.toMap(l -> String.valueOf(l.getSingerId()), SingerInfo::getSingerName));
+            res.putAll(map);
+        }
         return res;
     }
 

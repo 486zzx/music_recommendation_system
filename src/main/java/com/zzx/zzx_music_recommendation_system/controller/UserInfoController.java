@@ -49,9 +49,9 @@ public class UserInfoController {
 
     @ApiOperation("发送验证码")
     @PostMapping(value = "/sendValidateCode")
-    public ResVO<Void> sendValidateCode(@RequestBody @Valid ReqVO<String> reqVO, HttpServletRequest request) {
+    public ResVO<Void> sendValidateCode(@RequestBody @Valid ReqVO<String> reqVO) {
         try {
-            userInfoService.sendValidateCode(reqVO.getArgs(), request);
+            userInfoService.sendValidateCode(reqVO.getArgs());
             return ResVO.ok();
         } catch (MyException e) {
             return ResVO.fail(e.getMessage());
