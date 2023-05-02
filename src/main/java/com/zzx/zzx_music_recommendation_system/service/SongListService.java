@@ -1,8 +1,9 @@
 package com.zzx.zzx_music_recommendation_system.service;
 
+import com.zzx.zzx_music_recommendation_system.entity.MusicInfo;
 import com.zzx.zzx_music_recommendation_system.entity.SongList;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.zzx.zzx_music_recommendation_system.vo.AddOrUpdateSongListReqVO;
+import com.zzx.zzx_music_recommendation_system.vo.*;
 
 import java.util.List;
 
@@ -21,5 +22,13 @@ public interface SongListService extends IService<SongList> {
     List<SongList> getAllSongList();
 
     void deleteSongList(Long songListId);
+
+    GetSongListDetailResVO getSongListDetail(Long songListId);
+
+    PageVO<RankResVO> getMusicsFromSongList(GetMusicsFromSongListReqVO songListId);
+
+    void collectSongList(Long songListId);
+
+    List<RankResVO> getAllMusicFromSongList(Long songListId);
 
 }

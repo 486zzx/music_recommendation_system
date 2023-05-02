@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * <p>
@@ -39,6 +40,16 @@ public class LikeInfoController {
         }
     }
 
+    @ApiOperation("批量播放音乐")
+    @PostMapping("/playMusics")
+    public ResVO<List<MusicInfo>> playMusics(@RequestBody @Valid ReqVO<List<Long>> musicId) {
+        try {
+            return ResVO.ok(likeInfoService.saveLikeInfoList(musicId.getArgs(), SongListTypeEnum.PLAY));
+        } catch (Exception e) {
+            return ResVO.fail(e.getMessage());
+        }
+    }
+
     @ApiOperation("下载音乐")
     @PostMapping("/downloadMusic")
     public ResVO<Void> downloadMusic(@RequestBody @Valid ReqVO<Long> musicId) {
@@ -55,7 +66,9 @@ public class LikeInfoController {
     public ResVO<Void> collectMusic(@RequestBody @Valid ReqVO<Long> musicId) {
         try {
             likeInfoService.saveLikeInfo(musicId.getArgs(), SongListTypeEnum.LIKE);
-            return ResVO.ok();
+            ResVO<Void> resVO = ResVO.ok();
+            resVO.setMessage("收藏成功！");
+            return resVO;
         } catch (Exception e) {
             return ResVO.fail(e.getMessage());
         }

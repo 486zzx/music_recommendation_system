@@ -18,7 +18,7 @@
     </resultMap>
 
     <select id="queryForPage" resultType="com.zzx.zzx_music_recommendation_system.vo.CommentVO">
-        SELECT A.*, U.value1 AS userValue1, U.user_name AS userName
+        SELECT A.*, U.value1 AS userValue1, U.name AS userName
         FROM comment_info A
                  LEFT JOIN user_info U on A.user_id = U.user_id
         WHERE A.music_id = #{musicId}

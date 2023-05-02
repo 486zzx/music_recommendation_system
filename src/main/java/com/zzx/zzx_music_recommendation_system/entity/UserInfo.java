@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -34,8 +33,8 @@ public class UserInfo implements Serializable , UserDetails {
     @TableId("user_id")
     private Long userId;
 
-    @TableField("user_name")
-    private String userName;
+    @TableField("name")
+    private String name;
 
     @TableField("user_type")
     private Integer userType;

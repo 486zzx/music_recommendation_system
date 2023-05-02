@@ -11,13 +11,9 @@ import com.zzx.zzx_music_recommendation_system.login.UserInfoUtil;
 import com.zzx.zzx_music_recommendation_system.mapper.LikeInfoMapper;
 import com.zzx.zzx_music_recommendation_system.service.LikeInfoService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.zzx.zzx_music_recommendation_system.utils.CommonUtils;
-import com.zzx.zzx_music_recommendation_system.utils.DateUtils;
-import com.zzx.zzx_music_recommendation_system.utils.RedisUtils;
-import com.zzx.zzx_music_recommendation_system.utils.SshSshdUtils;
+import com.zzx.zzx_music_recommendation_system.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,13 +23,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.zzx.zzx_music_recommendation_system.constant.StringConstants.*;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author zzx
@@ -55,11 +52,13 @@ public class LikeInfoServiceImpl extends ServiceImpl<LikeInfoMapper, LikeInfo> i
     public boolean updateMouthRank() {
         LocalDateTime time = LocalDateTime.now().minusMonths(1);
         try {
-            List<String> mouth = redisUtils.getList(RedisUtils.Type.MOUTH_RANKING, DateUtils.getDateyyyyMMStr(time), new TypeReference<List<String>>() {});
+            List<String> mouth = redisUtils.getList(RedisUtils.Type.MOUTH_RANKING, DateUtils.getDateyyyyMMStr(time), new TypeReference<List<String>>() {
+            });
             if (mouth != null && mouth.size() >= 1) {
                 return true;
             }
-            List<String> lastMouth = redisUtils.getList(RedisUtils.Type.MOUTH_RANKING, DateUtils.getDateyyyyMMStr(time.minusMonths(1)), new TypeReference<List<String>>() {});
+            List<String> lastMouth = redisUtils.getList(RedisUtils.Type.MOUTH_RANKING, DateUtils.getDateyyyyMMStr(time.minusMonths(1)), new TypeReference<List<String>>() {
+            });
             if (lastMouth != null && lastMouth.size() >= 1) {
                 redisUtils.deleteList(RedisUtils.Type.MOUTH_RANKING, DateUtils.getDateyyyyMMStr(time.minusMonths(1)));
             }
@@ -76,11 +75,13 @@ public class LikeInfoServiceImpl extends ServiceImpl<LikeInfoMapper, LikeInfo> i
     public boolean updateDayRank() {
         LocalDateTime time = LocalDateTime.now().minusDays(1);
         try {
-            List<String> day = redisUtils.getList(RedisUtils.Type.DAY_RANKING, DateUtils.getDateyyyyMMddStr(time), new TypeReference<List<String>>() {});
+            List<String> day = redisUtils.getList(RedisUtils.Type.DAY_RANKING, DateUtils.getDateyyyyMMddStr(time), new TypeReference<List<String>>() {
+            });
             if (day != null && day.size() >= 1) {
                 return true;
             }
-            List<String> lastDay = redisUtils.getList(RedisUtils.Type.DAY_RANKING, DateUtils.getDateyyyyMMddStr(time.minusMonths(1)), new TypeReference<List<String>>() {});
+            List<String> lastDay = redisUtils.getList(RedisUtils.Type.DAY_RANKING, DateUtils.getDateyyyyMMddStr(time.minusMonths(1)), new TypeReference<List<String>>() {
+            });
             if (lastDay != null && lastDay.size() >= 1) {
                 redisUtils.deleteList(RedisUtils.Type.DAY_RANKING, DateUtils.getDateyyyyMMddStr(time.minusDays(1)));
             }
@@ -96,12 +97,34 @@ public class LikeInfoServiceImpl extends ServiceImpl<LikeInfoMapper, LikeInfo> i
     @Override
     public MusicInfo saveLikeInfo(Long musicId, SongListTypeEnum songListTypeEnum) {
         MusicInfo musicInfo = musicInfoDao.getById(musicId);
+        if (songListTypeEnum.getCode().equals(SongListTypeEnum.LIKE.getCode()) &&
+                likeInfoDao.getOne(new QueryWrapper<LikeInfo>().lambda()
+                        .eq(LikeInfo::getMusicId, musicId)
+                        .eq(LikeInfo::getLikeType, SongListTypeEnum.LIKE.getCode())) != null) {
+            throw new MyException("已收藏该歌曲");
+        }
         LikeInfo likeInfo = new LikeInfo();
-//        likeInfo.setUserId(UserInfoUtil.getUserId());
+        likeInfo.setUserId(UserInfoUtil.getUserId());
         likeInfo.setMusicId(musicId);
         likeInfo.setLikeType(songListTypeEnum.getCode());
-//        CommonUtils.fillWhenSave(likeInfo);
+        CommonUtils.fillWhenSave(likeInfo);
         likeInfoDao.save(likeInfo);
+        return musicInfo;
+    }
+
+    @Override
+    public List<MusicInfo> saveLikeInfoList(List<Long> musicIds, SongListTypeEnum songListTypeEnum) {
+        List<MusicInfo> musicInfo = musicInfoDao.listByIds(musicIds);
+        List<LikeInfo> likeInfos = new ArrayList<>();
+        for (Long musicId : musicIds) {
+            LikeInfo likeInfo = new LikeInfo();
+            likeInfo.setUserId(UserInfoUtil.getUserId());
+            likeInfo.setMusicId(musicId);
+            likeInfo.setLikeType(songListTypeEnum.getCode());
+            CommonUtils.fillWhenSave(likeInfo);
+            likeInfos.add(likeInfo);
+        }
+        likeInfoDao.saveBatch(likeInfos);
         return musicInfo;
     }
 
@@ -110,7 +133,7 @@ public class LikeInfoServiceImpl extends ServiceImpl<LikeInfoMapper, LikeInfo> i
     public MusicInfo saveDownloadLikeInfo(Long musicId, HttpServletResponse response) {
         MusicInfo musicInfo = saveLikeInfo(musicId, SongListTypeEnum.DOWNLOAD);
         response.setContentType("audio/mpeg");
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+ musicInfo.getMusicName() + ".mp3");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + musicInfo.getMusicName() + ".mp3");
         if (musicInfo.getMusicContent() == null) {
             return musicInfo;
         }

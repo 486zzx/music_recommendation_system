@@ -1,7 +1,9 @@
 package com.zzx.zzx_music_recommendation_system.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zzx.zzx_music_recommendation_system.constant.StringConstants;
 import com.zzx.zzx_music_recommendation_system.dao.CommentInfoDao;
 import com.zzx.zzx_music_recommendation_system.dao.LikeInfoDao;
@@ -77,6 +79,35 @@ public class MusicInfoServiceImpl extends ServiceImpl<MusicInfoMapper, MusicInfo
         });
         return resVOS;
     }
+
+    @Override
+    public PageVO<RankResVO> getMusicsPage(Page<RankResVO> page, List<Long> musicIds) {
+        PageVO<RankResVO> pageVO = PageUtils.getPageResVO(RankResVO.class, () -> musicInfoDao.getMusicsPage(page, musicIds));
+        List<RankResVO> resVOS = pageVO.getRecords();
+        Map<String, String> singerMap = singerInfoService.getSingerName(resVOS.stream().map(RankResVO::getSingerId).collect(Collectors.toList()));
+        resVOS.forEach(l -> {
+            l.setSingerName(singerMap.get(l.getSingerId()));
+        });
+        Map<String, String> map = musicTypeDao.list().stream()
+                .collect(Collectors.toMap(l -> Long.toString(l.getTypeId()), MusicType::getTypeName));
+        resVOS.forEach(l -> {
+            if (l.getTypeIds() == null) {
+                return;
+            }
+            String[] strs = l.getTypeIds().split("\\|");;
+            if (strs == null || strs.length == 0) {
+                return;
+            }
+            String[] typeNames = new String[strs.length];
+            for (int i = 0; i < strs.length; i++) {
+                typeNames[i] = map.get(strs[i]);
+            }
+            l.setTypeNames(typeNames);
+        });
+        return pageVO;
+    }
+
+
 
     @Override
     public MusicDetailResVO musicDetail(Long musicId) {

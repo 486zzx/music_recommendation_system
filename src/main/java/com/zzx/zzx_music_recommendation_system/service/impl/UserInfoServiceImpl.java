@@ -2,7 +2,6 @@ package com.zzx.zzx_music_recommendation_system.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.mail.MailUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zzx.zzx_music_recommendation_system.dao.SongListDao;
 import com.zzx.zzx_music_recommendation_system.dao.UserInfoDao;
 import com.zzx.zzx_music_recommendation_system.dao.UserSongListDao;
@@ -20,7 +19,6 @@ import com.zzx.zzx_music_recommendation_system.utils.MyException;
 import com.zzx.zzx_music_recommendation_system.utils.RedisUtils;
 import com.zzx.zzx_music_recommendation_system.vo.LoginReqVO;
 import com.zzx.zzx_music_recommendation_system.vo.RegisterReqVO;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,9 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * <p>
@@ -124,7 +120,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
 
         //注册用户
         UserInfo userInfo = new UserInfo();
-        userInfo.setUserName(reqVO.getUserName());
+        userInfo.setName(reqVO.getUserName());
         userInfo.setUserPassword(new BCryptPasswordEncoder().encode(reqVO.getUserPassword()));
         userInfo.setUserEmail(reqVO.getUserEmail());
         CommonUtils.fillWhenSaveNoLogin(userInfo);

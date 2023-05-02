@@ -5,7 +5,7 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.zzx.zzx_music_recommendation_system.entity.UserInfo">
         <id column="user_id" property="userId" />
-        <result column="user_name" property="userName" />
+        <result column="name" property="name" />
         <result column="user_type" property="userType" />
         <result column="user_email" property="userEmail" />
         <result column="user_password" property="userPassword" />

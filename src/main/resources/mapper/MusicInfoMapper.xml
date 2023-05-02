@@ -31,5 +31,14 @@
             #{musicId}
         </foreach>
     </select>
+    <select id="getMusicsPage" resultType="com.zzx.zzx_music_recommendation_system.vo.RankResVO">
+        SELECT A.*
+        FROM music_info A
+        WHERE A.is_delete = 1
+        AND A.music_id IN
+        <foreach collection="musicIds" item="musicId" index="index" open="(" separator="," close=")">
+            #{musicId}
+        </foreach>
+    </select>
 
 </mapper>

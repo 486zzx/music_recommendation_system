@@ -1,9 +1,12 @@
 package com.zzx.zzx_music_recommendation_system.dao.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zzx.zzx_music_recommendation_system.dao.MusicInfoDao;
 import com.zzx.zzx_music_recommendation_system.entity.MusicInfo;
 import com.zzx.zzx_music_recommendation_system.mapper.MusicInfoMapper;
+import com.zzx.zzx_music_recommendation_system.vo.CommentVO;
 import com.zzx.zzx_music_recommendation_system.vo.RankResVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,5 +27,10 @@ public class MusicInfoDaoImpl extends ServiceImpl<MusicInfoMapper, MusicInfo> im
     @Override
     public List<RankResVO> getMusicInfo(List<Long> musics) {
         return musicInfoMapper.getRank(musics);
+    }
+
+    @Override
+    public IPage<RankResVO> getMusicsPage(Page<RankResVO> page, List<Long> musics) {
+        return musicInfoMapper.getMusicsPage(page, musics);
     }
 }
