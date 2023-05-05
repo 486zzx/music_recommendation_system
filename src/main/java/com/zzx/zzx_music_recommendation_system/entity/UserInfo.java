@@ -8,6 +8,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,6 +33,7 @@ public class UserInfo implements Serializable , UserDetails {
     private static final long serialVersionUID = 1L;
 
     @TableId("user_id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
 
     @TableField("name")
@@ -49,12 +52,14 @@ public class UserInfo implements Serializable , UserDetails {
     private String userNumber;
 
     @TableField("user_phone")
-    private Integer userPhone;
+    private Long userPhone;
 
     @TableField("create_user_id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long createUserId;
 
     @TableField("modify_user_id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long modifyUserId;
 
     @TableField("gmt_created")

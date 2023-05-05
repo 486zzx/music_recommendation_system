@@ -31,4 +31,6 @@ public interface SongListService extends IService<SongList> {
 
     List<RankResVO> getAllMusicFromSongList(Long songListId);
 
+    void deleteCollectSongList(Long songListId);
+
 }

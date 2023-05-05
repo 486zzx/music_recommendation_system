@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -47,7 +48,7 @@ public class RecommendAlgor {
         //构建评分矩阵
 
 //        ScoreMatrixConstruction.getFrequencyMatrix();
-        return null;
+        return new HashMap<>();
     }
 
     /**

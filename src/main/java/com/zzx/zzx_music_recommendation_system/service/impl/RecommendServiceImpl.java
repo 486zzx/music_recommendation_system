@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zzx.zzx_music_recommendation_system.service.UserTypeService;
 import com.zzx.zzx_music_recommendation_system.utils.CommonUtils;
 import com.zzx.zzx_music_recommendation_system.utils.DateUtils;
+import com.zzx.zzx_music_recommendation_system.utils.MyException;
 import com.zzx.zzx_music_recommendation_system.utils.RedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -69,19 +70,24 @@ public class RecommendServiceImpl extends ServiceImpl<RecommendMapper, Recommend
                 recommendList.add(recommend);
             });
         });
-        recommenndDao.saveBatch(recommendList);
+        if (recommendList.size() > 0) {
+            recommenndDao.saveBatch(recommendList);
+        } else {
+            //回滚，不删除历史推荐数据
+            throw new MyException("获取到的推荐列表为空！");
+        }
     }
 
     @Override
-    public List<Long> getRecommendMusic() {
-        List<Long> list = recommenndDao.getMusicIdsByRecommend();
-        //不够从月榜补充
+    public List<String> getRecommendMusic() {
+        List<String> list = recommenndDao.getMusicIdsByRecommend();
+        //不够从日榜补充
         if (list.size() < 20) {
-            LocalDateTime time = LocalDateTime.now().minusMonths(1);
-            List<String> mouth = redisUtils.getList(RedisUtils.Type.MOUTH_RANKING, DateUtils.getDateyyyyMMStr(time), new TypeReference<List<String>>() {});
+            LocalDateTime time = LocalDateTime.now().minusDays(1);
+            List<String> mouth = redisUtils.getList(RedisUtils.Type.DAY_RANKING, DateUtils.getDateyyyyMMddStr(time), new TypeReference<List<String>>() {});
             int i = 0;
             while (list.size() < 20 && i < mouth.size()) {
-                Long musicId = Long.parseLong(mouth.get(i));
+                String musicId = mouth.get(i);
                 if (!list.contains(musicId)) {
                     list.add(musicId);
                 }

@@ -25,4 +25,6 @@ public class GetOrSetCommentReqVO {
     @JSONField(format = "trim")
     private String value1;
 
+    private String value2;
+
 }

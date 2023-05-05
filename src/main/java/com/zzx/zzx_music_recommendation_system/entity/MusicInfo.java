@@ -6,6 +6,9 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -28,6 +31,7 @@ public class MusicInfo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableId("music_id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long musicId;
 
     @TableField("music_name")
@@ -52,9 +56,11 @@ public class MusicInfo implements Serializable {
     private Integer trendCoefficient;
 
     @TableField("create_user_id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long createUserId;
 
     @TableField("modify_user_id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long modifyUserId;
 
     @TableField("gmt_created")

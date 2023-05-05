@@ -2,9 +2,11 @@ package com.zzx.zzx_music_recommendation_system.vo;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -14,18 +16,18 @@ import java.util.List;
  * @DATE: 2023/4/20 1:33
  */
 @Data
-public class CommentVO {
-    @JSONField(serializeUsing = ToStringSerializer.class)
+public class CommentVO implements Serializable {
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long commentId;
-    @JSONField(serializeUsing = ToStringSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
-    @JSONField(serializeUsing = ToStringSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long musicId;
-    @JSONField(serializeUsing = ToStringSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long fatherId;
-
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long createUserId;
-
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long modifyUserId;
 
     private LocalDateTime gmtCreated;

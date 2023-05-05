@@ -102,4 +102,15 @@ public class SongListController {
         }
     }
 
+    @ApiOperation("取消收藏歌单")
+    @PostMapping("/deleteCollectSongList")
+    public ResVO<Void> deleteCollectSongList(@RequestBody @Valid ReqVO<Long> reqVO) {
+        try {
+            songListService.deleteCollectSongList(reqVO.getArgs());
+            return ResVO.ok();
+        } catch (Exception e) {
+            return ResVO.fail(e.getMessage());
+        }
+    }
+
 }

@@ -32,7 +32,7 @@ public class RecommendController {
 
     @ApiOperation("获得用户的个性化推荐音乐")
     @PostMapping(value = "/getRecommendMusic")
-    public ResVO<List<Long>> getRecommendMusic() {
+    public ResVO<List<String>> getRecommendMusic() {
         try {
             return ResVO.ok(recommendService.getRecommendMusic());
         } catch (MyException e) {

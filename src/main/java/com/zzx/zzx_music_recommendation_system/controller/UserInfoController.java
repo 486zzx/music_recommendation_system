@@ -79,5 +79,25 @@ public class UserInfoController {
         }
     }
 
+    @ApiOperation("用户详情")
+    @PostMapping(value = "/getUserDetail")
+    public ResVO<UserDetailResVO> getUserDetail() {
+        try {
+            return ResVO.ok(userInfoService.getUserDetail());
+        } catch (MyException e) {
+            return ResVO.fail(e.getMessage());
+        }
+    }
+
+    @ApiOperation("修改用户信息")
+    @PostMapping(value = "/changeUserDetail")
+    public ResVO<Void> changeUserDetail(@RequestBody @Valid ReqVO<UserInfo> reqVO) {
+        try {
+            userInfoService.changeUserDetail(reqVO.getArgs());
+            return ResVO.ok();
+        } catch (MyException e) {
+            return ResVO.fail(e.getMessage());
+        }
+    }
 
 }

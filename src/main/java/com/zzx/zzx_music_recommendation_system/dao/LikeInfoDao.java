@@ -23,5 +23,7 @@ public interface LikeInfoDao extends IService<LikeInfo> {
      */
     Integer getPlayCount(Long userId);
 
-    Integer getAllPlayCount();
+    List<LikeInfo> getCollectSongs(Long userId);
+
+    Integer getMusicPlayCount(Long musicId);
 }

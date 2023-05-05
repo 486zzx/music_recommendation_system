@@ -2,6 +2,7 @@ package com.zzx.zzx_music_recommendation_system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.zzx.zzx_music_recommendation_system.constant.StringConstants;
 import com.zzx.zzx_music_recommendation_system.dao.LikeInfoDao;
 import com.zzx.zzx_music_recommendation_system.dao.MusicInfoDao;
 import com.zzx.zzx_music_recommendation_system.entity.LikeInfo;
@@ -80,7 +81,7 @@ public class LikeInfoServiceImpl extends ServiceImpl<LikeInfoMapper, LikeInfo> i
             if (day != null && day.size() >= 1) {
                 return true;
             }
-            List<String> lastDay = redisUtils.getList(RedisUtils.Type.DAY_RANKING, DateUtils.getDateyyyyMMddStr(time.minusMonths(1)), new TypeReference<List<String>>() {
+            List<String> lastDay = redisUtils.getList(RedisUtils.Type.DAY_RANKING, DateUtils.getDateyyyyMMddStr(time.minusDays(1)), new TypeReference<List<String>>() {
             });
             if (lastDay != null && lastDay.size() >= 1) {
                 redisUtils.deleteList(RedisUtils.Type.DAY_RANKING, DateUtils.getDateyyyyMMddStr(time.minusDays(1)));
@@ -100,7 +101,9 @@ public class LikeInfoServiceImpl extends ServiceImpl<LikeInfoMapper, LikeInfo> i
         if (songListTypeEnum.getCode().equals(SongListTypeEnum.LIKE.getCode()) &&
                 likeInfoDao.getOne(new QueryWrapper<LikeInfo>().lambda()
                         .eq(LikeInfo::getMusicId, musicId)
-                        .eq(LikeInfo::getLikeType, SongListTypeEnum.LIKE.getCode())) != null) {
+                        .eq(LikeInfo::getLikeType, SongListTypeEnum.LIKE.getCode())
+                        .eq(LikeInfo::getUserId, UserInfoUtil.getUserId())
+                        .last(LIMIT_1)) != null) {
             throw new MyException("已收藏该歌曲");
         }
         LikeInfo likeInfo = new LikeInfo();

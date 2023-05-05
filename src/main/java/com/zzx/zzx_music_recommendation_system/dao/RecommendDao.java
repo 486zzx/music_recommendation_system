@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface RecommendDao extends IService<Recommend> {
 
-    List<Long> getMusicIdsByRecommend();
+    List<String> getMusicIdsByRecommend();
 }

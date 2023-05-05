@@ -17,6 +17,6 @@ public class AddOrUpdateSongListReqVO {
     @NotBlank(message = "歌单名称不能为空！")
     private String value1;
 
-
+    private String value3;
 
 }

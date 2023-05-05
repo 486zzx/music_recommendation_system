@@ -47,18 +47,27 @@ public class LikeInfoDaoImpl extends ServiceImpl<LikeInfoMapper, LikeInfo> imple
 
     @Override
     public Integer getPlayCount(Long userId) {
-        List<LikeInfo> list = list(new QueryWrapper<LikeInfo>().lambda()
+        Integer res = likeInfoMapper.selectCount(new QueryWrapper<LikeInfo>().lambda()
                 .eq(LikeInfo::getUserId, userId)
                 .eq(LikeInfo::getLikeType, SongListTypeEnum.PLAY.getCode()));
-        return list.size();
+        return res;
 
     }
 
     @Override
-    public Integer getAllPlayCount() {
-        List<LikeInfo> list = list(new QueryWrapper<LikeInfo>().lambda()
+    public List<LikeInfo> getCollectSongs(Long userId) {
+        List<LikeInfo> res = likeInfoMapper.selectList(new QueryWrapper<LikeInfo>().lambda()
+                .eq(LikeInfo::getUserId, userId)
+                .eq(LikeInfo::getLikeType, SongListTypeEnum.LIKE.getCode()));
+        return res;
+    }
+
+    @Override
+    public Integer getMusicPlayCount(Long musicId) {
+        Integer res = likeInfoMapper.selectCount(new QueryWrapper<LikeInfo>().lambda()
+                .eq(LikeInfo::getMusicId, musicId)
                 .eq(LikeInfo::getLikeType, SongListTypeEnum.PLAY.getCode()));
-        return list.size();
+        return res;
     }
 
 

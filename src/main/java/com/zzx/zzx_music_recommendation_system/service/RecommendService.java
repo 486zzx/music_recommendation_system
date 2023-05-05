@@ -17,6 +17,6 @@ public interface RecommendService extends IService<Recommend> {
 
     void updateRecommend();
 
-    List<Long> getRecommendMusic();
+    List<String> getRecommendMusic();
 
 }

@@ -9,6 +9,7 @@ import com.zzx.zzx_music_recommendation_system.login.UserInfoUtil;
 import com.zzx.zzx_music_recommendation_system.mapper.RecommendMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,15 +22,17 @@ import java.util.stream.Collectors;
 public class RecommendDaoImpl extends ServiceImpl<RecommendMapper, Recommend> implements RecommendDao {
 
     @Override
-    public List<Long> getMusicIdsByRecommend() {
-        return list(new QueryWrapper<Recommend>().lambda()
+    public List<String> getMusicIdsByRecommend() {
+        List<Recommend> recommends = list(new QueryWrapper<Recommend>().lambda()
                 .eq(Recommend::getUserId, UserInfoUtil.getUserId())
                 .orderByDesc()
-                .last(StringConstants.LIMIT_20))
-                .stream()
-                .map(Recommend::getMusicId)
+                .last(StringConstants.LIMIT_20));
+        if (recommends == null) {
+            return new ArrayList<>();
+        }
+        return recommends.stream()
+                .map(l -> Long.toString(l.getMusicId()))
                 .collect(Collectors.toList());
-
     }
 
 }

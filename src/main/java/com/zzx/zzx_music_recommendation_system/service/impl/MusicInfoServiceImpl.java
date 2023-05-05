@@ -56,6 +56,9 @@ public class MusicInfoServiceImpl extends ServiceImpl<MusicInfoMapper, MusicInfo
 
     @Override
     public List<RankResVO> getMusics(List<Long> musicIds) {
+        if (musicIds == null || musicIds.size() == 0) {
+            return null;
+        }
         List<RankResVO> resVOS = musicInfoDao.getMusicInfo(musicIds);
         Map<String, String> singerMap = singerInfoService.getSingerName(resVOS.stream().map(RankResVO::getSingerId).collect(Collectors.toList()));
         resVOS.forEach(l -> {

@@ -4,6 +4,7 @@ import com.zzx.zzx_music_recommendation_system.entity.UserInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zzx.zzx_music_recommendation_system.vo.LoginReqVO;
 import com.zzx.zzx_music_recommendation_system.vo.RegisterReqVO;
+import com.zzx.zzx_music_recommendation_system.vo.UserDetailResVO;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -35,5 +36,9 @@ public interface UserInfoService extends IService<UserInfo> {
     void register(RegisterReqVO reqVO);
 
     String login(LoginReqVO reqVO);
+
+    UserDetailResVO getUserDetail();
+
+    void changeUserDetail(UserInfo userInfo);
 
 }

@@ -3,9 +3,12 @@ package com.zzx.zzx_music_recommendation_system.vo;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -14,8 +17,8 @@ import java.time.LocalDateTime;
  * @DATE: 2023/4/19 12:38
  */
 @Data
-public class RankResVO {
-    @JSONField(serializeUsing = ToStringSerializer.class)
+public class RankResVO implements Serializable {
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long musicId;
 
     private String musicName;
@@ -36,9 +39,9 @@ public class RankResVO {
     private String musicContent;
 
     private Integer trendCoefficient;
-
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long createUserId;
-
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long modifyUserId;
 
     private LocalDateTime gmtCreated;

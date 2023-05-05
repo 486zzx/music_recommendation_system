@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zzx.zzx_music_recommendation_system.dao.MusicInfoDao;
 import com.zzx.zzx_music_recommendation_system.entity.MusicInfo;
 import com.zzx.zzx_music_recommendation_system.mapper.MusicInfoMapper;
-import com.zzx.zzx_music_recommendation_system.vo.CommentVO;
 import com.zzx.zzx_music_recommendation_system.vo.RankResVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

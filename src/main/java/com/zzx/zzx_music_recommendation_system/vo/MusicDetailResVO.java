@@ -3,6 +3,7 @@ package com.zzx.zzx_music_recommendation_system.vo;
 import lombok.Data;
 import org.springframework.data.domain.Page;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ import java.util.List;
  * @DATE: 2023/4/20 1:13
  */
 @Data
-public class MusicDetailResVO extends RankResVO{
+public class MusicDetailResVO extends RankResVO implements Serializable {
 
     private Long playTimes;
     private Long collectTimes;

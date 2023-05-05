@@ -57,6 +57,7 @@ public class SongListServiceImpl extends ServiceImpl<SongListMapper, SongList> i
         SongList songList = new SongList();
         BeanUtil.copyProperties(reqVO, songList);
         songList.setSongListType(SongListTypeEnum.COMMON_SONG_LIST.getCode());
+        songList.setUserId(UserInfoUtil.getUserId());
         if (songList.getSongListId() == null) {
             CommonUtils.fillWhenSave(songList);
             songListDao.save(songList);
@@ -80,6 +81,8 @@ public class SongListServiceImpl extends ServiceImpl<SongListMapper, SongList> i
         songListDao.removeById(songListId);
         musicSongListDao.remove(new QueryWrapper<MusicSongList>().lambda()
                 .eq(MusicSongList::getSongListId, songListId));
+        userSongListDao.remove(new QueryWrapper<UserSongList>().lambda()
+                .eq(UserSongList::getSongListId, songListId));
     }
 
     @Override
@@ -129,6 +132,19 @@ public class SongListServiceImpl extends ServiceImpl<SongListMapper, SongList> i
     public List<RankResVO> getAllMusicFromSongList(Long songListId) {
         List<Long> list = musicSongListDao.getExistSongs(songListId);
         return musicInfoService.getMusics(list);
+    }
+
+    @Override
+    public void deleteCollectSongList(Long songListId) {
+        UserSongList userSongList = userSongListDao.getOne(new QueryWrapper<UserSongList>().lambda()
+                .eq(UserSongList::getSongListId, songListId)
+                .eq(UserSongList::getUserId, UserInfoUtil.getUserId())
+                .last(StringConstants.LIMIT_1));
+        if (userSongList != null) {
+            userSongListDao.remove(new QueryWrapper<UserSongList>().lambda()
+                    .eq(UserSongList::getSongListId, songListId)
+                    .eq(UserSongList::getUserId, UserInfoUtil.getUserId()));
+        }
     }
 
 }

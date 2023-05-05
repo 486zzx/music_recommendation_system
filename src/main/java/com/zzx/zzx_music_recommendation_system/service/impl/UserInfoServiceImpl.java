@@ -1,24 +1,28 @@
 package com.zzx.zzx_music_recommendation_system.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.mail.MailUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.zzx.zzx_music_recommendation_system.dao.LikeInfoDao;
 import com.zzx.zzx_music_recommendation_system.dao.SongListDao;
 import com.zzx.zzx_music_recommendation_system.dao.UserInfoDao;
 import com.zzx.zzx_music_recommendation_system.dao.UserSongListDao;
-import com.zzx.zzx_music_recommendation_system.entity.SongList;
-import com.zzx.zzx_music_recommendation_system.entity.UserInfo;
-import com.zzx.zzx_music_recommendation_system.entity.UserSongList;
+import com.zzx.zzx_music_recommendation_system.entity.*;
 import com.zzx.zzx_music_recommendation_system.enums.SongListTypeEnum;
 import com.zzx.zzx_music_recommendation_system.login.JwtTokenUtil;
 import com.zzx.zzx_music_recommendation_system.login.LoginUserCache;
+import com.zzx.zzx_music_recommendation_system.login.UserInfoUtil;
 import com.zzx.zzx_music_recommendation_system.mapper.UserInfoMapper;
 import com.zzx.zzx_music_recommendation_system.service.UserInfoService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zzx.zzx_music_recommendation_system.utils.CommonUtils;
 import com.zzx.zzx_music_recommendation_system.utils.MyException;
 import com.zzx.zzx_music_recommendation_system.utils.RedisUtils;
+import com.zzx.zzx_music_recommendation_system.vo.GetHotSongListResVO;
 import com.zzx.zzx_music_recommendation_system.vo.LoginReqVO;
 import com.zzx.zzx_music_recommendation_system.vo.RegisterReqVO;
+import com.zzx.zzx_music_recommendation_system.vo.UserDetailResVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,10 +33,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -68,6 +77,9 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
 
     @Autowired
     private LoginUserCache loginUserCache;
+
+    @Autowired
+    private LikeInfoDao likeInfoDao;
 
     @Override
     public void sendValidateCode(String email) {
@@ -113,9 +125,16 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
             throw new MyException("验证码错误");
         }
 
-        //查看用户是否存在,存在则报错
+        //查看用户是否存在,存在则修改信息
         if (userInfoDao.isEmailExist(reqVO.getUserEmail())) {
-            throw new MyException("该邮箱已注册");
+            UserInfo userInfo = userInfoDao.getOne(new QueryWrapper<UserInfo>().lambda()
+                    .eq(UserInfo::getUserEmail, reqVO.getUserEmail()));
+            userInfo.setName(reqVO.getUserName());
+            userInfo.setUserPassword(new BCryptPasswordEncoder().encode(reqVO.getUserPassword()));
+            userInfo.setUserEmail(reqVO.getUserEmail());
+            CommonUtils.fillWhenUpdateNoLogin(userInfo);
+            userInfoDao.updateById(userInfo);
+            return;
         }
 
         //注册用户
@@ -163,6 +182,57 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         loginUserCache.set(token, userDetails);
         userInfoDao.login(reqVO.getUserEmail());
         return token;
+    }
+
+    @Override
+    public UserDetailResVO getUserDetail() {
+        UserDetailResVO resVO = new UserDetailResVO();
+        //用户普通信息
+        Long userId = UserInfoUtil.getUserId();
+        UserInfo userInfo = userInfoDao.getById(userId);
+        BeanUtil.copyProperties(userInfo, resVO);
+        //用户听歌数量
+        resVO.setPlayCount(likeInfoDao.getPlayCount(userId));
+        //创建的歌单
+        List<SongList> songListList = songListDao.list(new QueryWrapper<SongList>().lambda()
+                .eq(SongList::getUserId, userId));
+        List<GetHotSongListResVO> getHotSongListResVOList = BeanUtil.copyToList(songListList, GetHotSongListResVO.class);
+        Map<Long, Long> map = userSongListDao.getHotSongList();
+        getHotSongListResVOList.forEach(l -> l.setCollectNum(map.getOrDefault(l.getSongListId(), 0L)));
+        resVO.setCreateSongLists(getHotSongListResVOList);
+        //收藏的歌单（还要包括我喜欢的音乐）
+        List<String> musicInfoList = likeInfoDao.getCollectSongs(userId).stream().map(l -> String.valueOf(l.getMusicId())).collect(Collectors.toList());
+        resVO.setMusicInfoList(musicInfoList);
+
+        List<Long> collectSongListIds = userSongListDao.list(new QueryWrapper<UserSongList>().lambda()
+                .select(UserSongList::getSongListId)
+                .eq(UserSongList::getUserId, userId))
+                .stream().map(UserSongList::getSongListId).collect(Collectors.toList());
+        if (collectSongListIds.size() == 0) {
+            return resVO;
+        }
+        List<SongList> songListList1 = songListDao.listByIds(collectSongListIds);
+        getHotSongListResVOList = BeanUtil.copyToList(songListList1, GetHotSongListResVO.class);
+        getHotSongListResVOList.forEach(l -> l.setCollectNum(map.getOrDefault(l.getSongListId(), 0L)));
+        resVO.setCollectSongLists(getHotSongListResVOList);
+        return resVO;
+    }
+
+    @Override
+    public void changeUserDetail(UserInfo userInfo) {
+        if (!StringUtils.hasText(userInfo.getUserEmail())) {
+            throw new MyException("用户邮箱不能为空");
+        }
+        UserInfo userInfo1 = userInfoDao.getOne(new QueryWrapper<UserInfo>().lambda()
+                .eq(UserInfo::getUserEmail, userInfo.getUserEmail()));
+        userInfo1.setName(userInfo.getName());
+        userInfo1.setUserNumber(userInfo.getUserNumber());
+        userInfo1.setUserPhone(userInfo.getUserPhone());
+        userInfo1.setGmtModified(LocalDateTime.now());
+        if (StringUtils.hasText(userInfo.getUserPassword())) {
+            userInfo1.setUserPassword(new BCryptPasswordEncoder().encode(userInfo.getUserPassword()));
+        }
+        userInfoDao.updateById(userInfo1);
     }
 
 

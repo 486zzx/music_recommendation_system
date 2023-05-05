@@ -1,33 +1,33 @@
 package com.zzx.zzx_music_recommendation_system.vo;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @DESCRIPTION:
  * @USER: zzx
- * @DATE: 2023/4/28 20:55
+ * @DATE: 2023/5/4 14:18
  */
 @Data
-public class GetHotSongListResVO implements Serializable {
-
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Long songListId;
+public class UserDetailResVO implements Serializable {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
 
-    private Integer songListType;
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Long createUserId;
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Long modifyUserId;
+    private String name;
+
+    private Integer userType;
+
+    private String userEmail;
+
+    private String userNumber;
+
+    private Long userPhone;
 
     private LocalDateTime gmtCreated;
 
@@ -39,6 +39,12 @@ public class GetHotSongListResVO implements Serializable {
 
     private String value3;
 
-    private Long collectNum;
+    private Integer playCount;
+    //我创建的歌单信息
+    private List<GetHotSongListResVO> createSongLists;
+    //我喜欢的音乐id
+    private List<String> musicInfoList;
+    //我收藏的歌单
+    private List<GetHotSongListResVO> collectSongLists;
 
 }
