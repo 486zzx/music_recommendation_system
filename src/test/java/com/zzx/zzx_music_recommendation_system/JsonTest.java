@@ -30,9 +30,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 @SpringBootTest()
@@ -142,6 +140,22 @@ public class JsonTest {
     }
 
     public static void main(String[] args) throws IOException {
+
+            HashMap<Integer, String> hashMap = new HashMap<>();
+            hashMap.put(1, "apple");
+            hashMap.put(2, "banana");
+            hashMap.put(3, "orange");
+
+            // 获取所有值的集合
+            Collection<String> values = hashMap.values();
+
+            // 遍历集合
+            for (String value : values) {
+                System.out.println(value);
+            }
+
+
+
         SshServer sshd = SshServer.setUpDefaultServer();
         sshd.setHost("47.109.76.26");
         sshd.setPort(22);

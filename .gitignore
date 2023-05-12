@@ -31,3 +31,5 @@ build/
 
 ### VS Code ###
 .vscode/
+/src/main/resources/lastfm_subset/
+/src/main/resources/userid-timestamp-artid-artname-traid-traname.tsv

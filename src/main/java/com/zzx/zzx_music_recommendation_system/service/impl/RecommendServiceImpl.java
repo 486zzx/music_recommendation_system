@@ -56,8 +56,7 @@ public class RecommendServiceImpl extends ServiceImpl<RecommendMapper, Recommend
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.NESTED)
     public void updateRecommend() {
-        recommenndDao.remove(new QueryWrapper<Recommend>().lambda()
-                .eq(Recommend::getIsDelete, 1));
+        recommenndDao.remove(new QueryWrapper<Recommend>().lambda());
         Map<Long, Map<Long, Float>> map = recommendAlgor.recommend();
         List<Recommend> recommendList = new ArrayList<>();
         map.forEach((userId, map1) -> {

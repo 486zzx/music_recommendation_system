@@ -41,6 +41,7 @@ public class RecommendAlgor {
     private static final int k = 2;
 
 
+
     /**
      * 算法使用选择
      */

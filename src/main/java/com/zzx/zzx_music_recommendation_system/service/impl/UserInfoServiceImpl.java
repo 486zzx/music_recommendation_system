@@ -83,13 +83,6 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
 
     @Override
     public void sendValidateCode(String email) {
-        //1.避免重复申请
-
-        //2.验证是否存在
-        if (userInfoDao.isEmailExist(email)) {
-            throw new MyException("该邮件已存在");
-        }
-        //3.发送验证码
         String code=(int)(Math.random()*10000)+"";
         try {
             sendEmail(email, code);

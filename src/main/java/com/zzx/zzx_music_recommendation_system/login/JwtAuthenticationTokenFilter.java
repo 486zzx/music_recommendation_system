@@ -31,13 +31,14 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response, FilterChain chain) throws ServletException,
             IOException {
-
+        //获取token
         String authToken = UserInfoUtil.obtainAuthorization(request, TOKEN_HEADER);
         log.info("token:{}", authToken);
         //存在token
         if (null != authToken) {
             String username = jwtTokenUtil.getUserNameFormToken(authToken);
             UserDetails user = loginUserCache.get(authToken);
+            //从cache查询，没有说明过期
             if (user == null || null == username || !username.equals(user.getUsername())) {
                 throw new AccessDeniedException("token 错误");
             }
@@ -54,9 +55,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                         WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-
         }
-
         chain.doFilter(request, response);
     }
 }

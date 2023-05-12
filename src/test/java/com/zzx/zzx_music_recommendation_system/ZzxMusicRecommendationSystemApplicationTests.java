@@ -45,7 +45,7 @@ class ZzxMusicRecommendationSystemApplicationTests {
         Tag tag = audioFile.getTag();
         String artist = tag.getFirst(FieldKey.ARTIST);
         String title = tag.getFirst(FieldKey.TITLE);
-        MusicUtils.getMusicInfo("src/main/resources/mp3/喜欢你.mp3");
+//        MusicUtils.getMusicInfo("src/main/resources/mp3/喜欢你.mp3");
     }
 
 

@@ -39,11 +39,11 @@ public class UserSongListServiceImpl extends ServiceImpl<UserSongListMapper, Use
         List<SongList> songLists = songListDao.list();
         List<GetHotSongListResVO> getHotSongListResVOS = BeanUtil.copyToList(songLists, GetHotSongListResVO.class);
         getHotSongListResVOS.forEach(l -> {
-            l.setCollectNum(map.getOrDefault(l.getCollectNum(), 0L));
+            l.setCollectNum(map.getOrDefault(l.getSongListId(), 0L));
         });
         List<GetHotSongListResVO> res = getHotSongListResVOS.stream()
-                .sorted(Comparator.comparingLong(GetHotSongListResVO::getCollectNum).reversed())
-                .limit(20)
+                .sorted(Comparator.comparingLong(GetHotSongListResVO::getCollectNum))
+                .limit(10)
                 .collect(Collectors.toList());
         return res;
     }

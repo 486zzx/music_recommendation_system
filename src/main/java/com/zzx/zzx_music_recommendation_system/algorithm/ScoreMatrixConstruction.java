@@ -13,18 +13,18 @@ import java.util.function.Consumer;
  */
 public class ScoreMatrixConstruction {
 
-    private final static float PLAY_SCORE=1f;
-    private final static float DOWNLOAD_SCORE=2f;
-    private final static float COLLECTION_SCORE=4f;
-    private final static float MAX_SCORE=10f;
+    private final static float PLAY_SCORE=0.1f;
+    private final static float DOWNLOAD_SCORE=0.2f;
+    private final static float COLLECTION_SCORE=0.3f;
+    private final static float MAX_SCORE=1f;
     private final static long FLAG =0;
 
-    private final static long PLAY_TIME=10;
+    private final static long PLAY_TIME=1;
 
 
     /**
      * 用用户行为进行隐式评分
-     * 总分10分，播放10次得1分，下载2分，收藏4分，如果超过10分，按10分计算.
+     * 总分1分，播放1次得0.1分，下载0.2分，收藏0.3分，如果超过1分，按1分计算.
      * @param userIdList
      * 用户Id列表
      * @param songIdList
@@ -76,8 +76,8 @@ public class ScoreMatrixConstruction {
                  */
                 if(userId2songIdPlayMap.get(userId)!=null && userId2songIdPlayMap.get(userId).get(FLAG).contains(songId)) {
                     //表示分数
-                    long socre=userId2songIdPlayMap.get(userId).get(songId).iterator().next() / PLAY_TIME;
-                    curUserRatingArray.put(songId, curUserRatingArray.getOrDefault(songId, 0f) + PLAY_SCORE * socre);
+                    long score=userId2songIdPlayMap.get(userId).get(songId).iterator().next() / PLAY_TIME;
+                    curUserRatingArray.put(songId, curUserRatingArray.getOrDefault(songId, 0f) + PLAY_SCORE * score);
                 }
 
                 /**
@@ -85,6 +85,60 @@ public class ScoreMatrixConstruction {
                  */
                 if(curUserRatingArray.getOrDefault(songId, 0f)>MAX_SCORE) {
                     curUserRatingArray.put(songId, MAX_SCORE);
+                }
+                /**
+                 * 没有得分设为0(堆会溢出)
+                 */
+                /*if(curUserRatingArray.getOrDefault(songId, 0f) <= 0.0f) {
+                    curUserRatingArray.put(songId, 0.0f);
+                }*/
+            }
+            //处理完一个用户
+            user2songRatingMatrix.put(userId, curUserRatingArray);
+        });
+        return user2songRatingMatrix;
+    }
+
+    public static Map<Long,Map<Long, Float>> getFrequencyMatrix1(List<Long> userIdList, List<Long> songIdList,
+                                                                List<LikeInfo> downloadList, List<LikeInfo> playList, List<LikeInfo> collectionList) {
+        // TODO Auto-generated method stub
+        final Map<Long,Map<Long, Float>> user2songRatingMatrix=new HashMap<>();
+        final int songLen=songIdList.size();
+        //获取用户-歌曲 下载映射
+        final Map<Long,Map<Long, Set<Long>>> userId2songIdDownloadMap=getUserId2songIdRecordMap(downloadList,false);
+        //获取用户-歌曲 收藏映射
+        final Map<Long, Map<Long, Set<Long>>> userId2songIdCollectionMap=getUserId2songIdRecordMap(collectionList,false);
+        //获取用户-歌曲-次数 播放映射
+        final Map<Long, Map<Long, Set<Long>>> userId2songIdPlayMap=getUserId2songIdRecordMap(playList,true);
+
+        userIdList.forEach(userId -> {
+            // TODO Auto-generated method stub
+            Map<Long, Float> curUserRatingArray = new HashMap<>();
+            //处理每一首歌曲
+            for(Long songId:songIdList) {
+                //处理下载，这里不考虑下载次数
+                if(userId2songIdDownloadMap.get(userId)!=null && userId2songIdDownloadMap.get(userId).get(FLAG).contains(songId)) {
+                    //当前用户下载过的歌曲
+                    curUserRatingArray.put(songId, curUserRatingArray.getOrDefault(songId, 0f) + DOWNLOAD_SCORE);
+                }
+                //处理收藏，这里没有次数
+                if(userId2songIdCollectionMap.get(userId)!=null && userId2songIdCollectionMap.get(userId).get(FLAG).contains(songId)) {
+                    //当前用户收藏的歌曲
+                    curUserRatingArray.put(songId, curUserRatingArray.getOrDefault(songId, 0f) + COLLECTION_SCORE);
+                }
+                //处理播放，考虑播放次数
+                if(userId2songIdPlayMap.get(userId)!=null && userId2songIdPlayMap.get(userId).get(FLAG).contains(songId)) {
+                    //表示获得分数的次数
+                    long score=userId2songIdPlayMap.get(userId).get(songId).iterator().next() / PLAY_TIME;
+                    curUserRatingArray.put(songId, curUserRatingArray.getOrDefault(songId, 0f) + PLAY_SCORE * score);
+                }
+                //处理最大得分，超过最大得分，记为最大得分
+                if(curUserRatingArray.getOrDefault(songId, 0f)>MAX_SCORE) {
+                    curUserRatingArray.put(songId, MAX_SCORE);
+                }
+                //没有得分设为0(大量数据堆会溢出)
+                if(curUserRatingArray.getOrDefault(songId, 0f) <= 0.0f) {
+                    curUserRatingArray.put(songId, 0.0f);
                 }
             }
             //处理完一个用户
@@ -109,8 +163,11 @@ public class ScoreMatrixConstruction {
      * （2）存放出现过的歌曲Flay,Set<SongId>.
      */
     private static <T> Map<Long, Map<Long, Set<Long>>> getUserId2songIdRecordMap(final List<T> recordList,final boolean isCount) {
-        // TODO Auto-generated method stub
         final Map<Long, Map<Long, Set<Long>>> userId2songIdRecordMap=new HashMap<>();
+        if (recordList == null || recordList.size() == 0) {
+            return userId2songIdRecordMap;
+        }
+        // TODO Auto-generated method stub
 
         recordList.forEach(new Consumer<T>() {
 
@@ -118,11 +175,11 @@ public class ScoreMatrixConstruction {
                 // TODO Auto-generated method stub
                 try {
                     Field userIdField=t.getClass().getDeclaredField("userId");
-                    Field songIdField=t.getClass().getDeclaredField("songId");
+                    Field songIdField=t.getClass().getDeclaredField("musicId");
                     userIdField.setAccessible(true);
                     songIdField.setAccessible(true);
-                    long userId=userIdField.getLong(t);
-                    long songId=songIdField.getLong(t);
+                    Long userId= (Long) userIdField.get(t);
+                    Long songId= (Long) songIdField.get(t);
 
                     if(userId2songIdRecordMap.containsKey(userId)) {
                         //获取当前用户的记录集合Map
