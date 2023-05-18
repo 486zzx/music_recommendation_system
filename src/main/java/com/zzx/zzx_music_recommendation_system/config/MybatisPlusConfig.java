@@ -28,17 +28,8 @@ public class MybatisPlusConfig {
 
     public static void main(String[] args) {
         List<String> tables = new ArrayList<>();
-        tables.add("comment_info");
-        tables.add("like_info");
-        tables.add("music_info");
-        tables.add("music_song_list");
-        tables.add("music_type");
-        tables.add("singer_info");
-        tables.add("song_list");
-        tables.add("user_info");
-        tables.add("user_song_list");
-        tables.add("user_type");
-        tables.add("recommend");
+
+        tables.add("recommend1");
 
 
 

@@ -32,8 +32,7 @@ public class MusicTypeController {
     @PostMapping(value = "/getMusicType")
     public ResVO<List<MusicType>> getMusicType() {
         try {
-            musicTypeService.getMusicType();
-            return ResVO.ok();
+            return ResVO.ok(musicTypeService.getMusicType());
         } catch (MyException e) {
             return ResVO.fail(e.getMessage());
         }

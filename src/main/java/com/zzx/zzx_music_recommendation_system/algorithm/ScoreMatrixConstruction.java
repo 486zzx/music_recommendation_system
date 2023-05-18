@@ -86,12 +86,6 @@ public class ScoreMatrixConstruction {
                 if(curUserRatingArray.getOrDefault(songId, 0f)>MAX_SCORE) {
                     curUserRatingArray.put(songId, MAX_SCORE);
                 }
-                /**
-                 * 没有得分设为0(堆会溢出)
-                 */
-                /*if(curUserRatingArray.getOrDefault(songId, 0f) <= 0.0f) {
-                    curUserRatingArray.put(songId, 0.0f);
-                }*/
             }
             //处理完一个用户
             user2songRatingMatrix.put(userId, curUserRatingArray);

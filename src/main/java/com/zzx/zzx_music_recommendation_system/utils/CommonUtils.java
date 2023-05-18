@@ -65,6 +65,15 @@ public class CommonUtils {
 
     }
 
+    public static int compare(Float f1, Float f2) {
+        if (f1 > f2) {
+            return 1;
+        } else if (f2 > f1) {
+            return -1;
+        } else {
+            return 0;
+        }
+    }
 
 
 }

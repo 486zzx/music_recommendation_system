@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.zzx.zzx_music_recommendation_system.algorithm.RecommendAlgor;
 import com.zzx.zzx_music_recommendation_system.constant.StringConstants;
 import com.zzx.zzx_music_recommendation_system.dao.LikeInfoDao;
+import com.zzx.zzx_music_recommendation_system.dao.Recommend1Dao;
 import com.zzx.zzx_music_recommendation_system.dao.RecommendDao;
 import com.zzx.zzx_music_recommendation_system.entity.Recommend;
 import com.zzx.zzx_music_recommendation_system.login.UserInfoUtil;
@@ -53,33 +54,24 @@ public class RecommendServiceImpl extends ServiceImpl<RecommendMapper, Recommend
     @Autowired
     private RedisUtils redisUtils;
 
+    @Autowired
+    private Recommend1Dao recommend1Dao;
+
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.NESTED)
     public void updateRecommend() {
-        recommenndDao.remove(new QueryWrapper<Recommend>().lambda());
-        Map<Long, Map<Long, Float>> map = recommendAlgor.recommend();
-        List<Recommend> recommendList = new ArrayList<>();
-        map.forEach((userId, map1) -> {
-            map1.forEach((musicId, score) -> {
-                Recommend recommend = new Recommend();
-                recommend.setUserId(userId);
-                recommend.setMusicId(musicId);
-                recommend.setSocre(score);
-                CommonUtils.fillWhenSaveNoLogin(recommend);
-                recommendList.add(recommend);
-            });
-        });
-        if (recommendList.size() > 0) {
-            recommenndDao.saveBatch(recommendList);
-        } else {
-            //回滚，不删除历史推荐数据
-            throw new MyException("获取到的推荐列表为空！");
-        }
+        List<Recommend> list = recommenndDao.list();
+        boolean isNull = list == null || list.size() == 0;
+        recommendAlgor.recommend(isNull);
     }
 
     @Override
     public List<String> getRecommendMusic() {
         List<String> list = recommenndDao.getMusicIdsByRecommend();
+        if (list.size() == 0) {
+            list = recommend1Dao.getMusicIdsByRecommend();
+        }
+
         //不够从日榜补充
         if (list.size() < 20) {
             LocalDateTime time = LocalDateTime.now().minusDays(1);

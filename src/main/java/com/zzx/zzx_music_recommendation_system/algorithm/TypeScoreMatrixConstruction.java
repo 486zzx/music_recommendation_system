@@ -40,16 +40,23 @@ public class TypeScoreMatrixConstruction {
         return ratingMatrix;
     }
 
+    /**
+     * 计算余弦相似度
+     * @param set1 用户喜好标签
+     * @param set2 音乐标签
+     * @return
+     */
     public static float calculateCosineSimilarity(Set<Long> set1, Set<Long> set2) {
         // 计算两个集合的交集数量
         Set<Long> intersection = new HashSet<>(set1);
         intersection.retainAll(set2);
         int intersectionSize = intersection.size();
-
+        if (set1.size() == 0 || set2.size() == 0) {
+            return 0f;
+        }
         // 计算两个集合的模长
         double magnitude1 = Math.sqrt(set1.size());
         double magnitude2 = Math.sqrt(set2.size());
-
         // 计算余弦相似度
         float cosineSimilarity = (float) (intersectionSize / (magnitude1 * magnitude2));
 
@@ -57,37 +64,19 @@ public class TypeScoreMatrixConstruction {
     }
 
 
-    public static List<Long> contentBasedRecommend(Map<Long, Map<Long, Float>> matrix, Long userId, int topN) {
-        // 获取该用户评分过的音乐的ID列表
-        List<Long> ratedMusicIds = new ArrayList<>();
-        for (Long musicId : matrix.get(userId).keySet()) {
-            if (matrix.get(userId).get(musicId) > 0.0f) {
-                ratedMusicIds.add(musicId);
-            }
-        }
+    public static List<Long> contentBasedRecommend(Map<Long, Map<Long, Float>> matrix, int topN, Long userId) {
+        Map<Long, Float> scores = matrix.get(userId);
 
-        // 遍历每个未评分的音乐，计算与该用户评分过的音乐的相似度
-        Map<Long, Float> scores = new HashMap<>();
-        for (Long musicId : matrix.keySet()) {
-            if (ratedMusicIds.contains(musicId)) {
-                continue;
-            }
-            float score = 0.0f;
-            for (Long ratedMusicId : ratedMusicIds) {
-                //ratedMusicId评分过，musicId没评分过
-                score += similarity(matrix, ratedMusicId, musicId);
-            }
-            scores.put(musicId, score);
-        }
-
-        // 对得分进行排序，取前topN个音乐作为推荐结果
+        // 对得分进行排序，取前topN个音乐作为推荐结果，推荐结果需要有评分
         List<Long> recommendedMusicIds = new ArrayList<>();
         scores.entrySet().stream()
+                .filter(longFloatEntry -> longFloatEntry.getValue() > 0.0f)
                 .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
                 .limit(topN)
                 .forEach(entry -> recommendedMusicIds.add(entry.getKey()));
         return recommendedMusicIds;
     }
+
 
     /**
      * 计算两首音乐的相似度

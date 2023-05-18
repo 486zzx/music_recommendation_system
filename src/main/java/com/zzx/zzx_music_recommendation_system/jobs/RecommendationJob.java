@@ -1,5 +1,6 @@
 package com.zzx.zzx_music_recommendation_system.jobs;
 
+import com.zzx.zzx_music_recommendation_system.algorithm.RecommendAlgor;
 import com.zzx.zzx_music_recommendation_system.constant.DateTimeConstants;
 import com.zzx.zzx_music_recommendation_system.service.RecommendService;
 import com.zzx.zzx_music_recommendation_system.utils.MyException;
@@ -18,13 +19,13 @@ import org.springframework.stereotype.Component;
 public class RecommendationJob {
 
     @Autowired
-    private RecommendService recommendService;
+    private RecommendAlgor recommendAlgor;
 
     @Scheduled(cron = DateTimeConstants.CRON_EVERYDAY_START_TIME_FORMAT)
     public void recommendation() {
         log.info("定时推荐开始!");
         try {
-            recommendService.updateRecommend();
+            recommendAlgor.recommend();
             log.info("定时推荐成功!");
         } catch (Exception e) {
             log.info("定时推荐失败!");
