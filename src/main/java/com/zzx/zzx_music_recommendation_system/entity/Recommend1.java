@@ -6,6 +6,9 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -28,12 +31,15 @@ public class Recommend1 implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableId("recommend_id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long recommendId;
 
     @TableField("user_id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
 
     @TableField("music_id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long musicId;
 
     @TableField("socre")
@@ -43,9 +49,11 @@ public class Recommend1 implements Serializable {
     private Integer recommendType;
 
     @TableField("create_user_id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long createUserId;
 
     @TableField("modify_user_id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long modifyUserId;
 
     @TableField("gmt_created")
@@ -64,7 +72,7 @@ public class Recommend1 implements Serializable {
     private String value3;
 
     @TableField("is_delete")
-    @TableLogic
+    @TableLogic(value="1",delval="0")
     private Integer isDelete;
 
 

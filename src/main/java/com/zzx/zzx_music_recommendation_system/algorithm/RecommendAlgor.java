@@ -61,10 +61,10 @@ public class RecommendAlgor {
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.NESTED)
     public void recommend() {
         boolean chooseRecommend;
-        if (recommendDao.isExistRecommends()) {
+        if (!recommendDao.isExistRecommends()) {
             chooseRecommend = true;
         } else {
-            if (recommend1Dao.isExistRecommends()) {
+            if (!recommend1Dao.isExistRecommends()) {
                 chooseRecommend = false;
             } else {
                 recommendDao.remove(new QueryWrapper<Recommend>().lambda().eq(Recommend::getIsDelete, 1));
@@ -79,8 +79,10 @@ public class RecommendAlgor {
         //对contentMap保存
         if (chooseRecommend) {
             saveBatchRecommend(contentMap);
+            recommend1Dao.remove(new QueryWrapper<Recommend1>().lambda().eq(Recommend1::getIsDelete, 1));
         } else {
             saveBatchRecommend1(contentMap);
+            recommendDao.remove(new QueryWrapper<Recommend>().lambda().eq(Recommend::getIsDelete, 1));
         }
     }
 
@@ -99,6 +101,7 @@ public class RecommendAlgor {
                 recommend.setMusicId(musicId);
                 recommend.setGmtCreated(now);
                 recommend.setGmtModified(now);
+                recommend.setIsDelete(1);
                 recommendList.add(recommend);
             }
         }
@@ -124,6 +127,7 @@ public class RecommendAlgor {
                 recommend.setMusicId(musicId);
                 recommend.setGmtCreated(now);
                 recommend.setGmtModified(now);
+                recommend.setIsDelete(1);
                 recommendList.add(recommend);
             }
         }
@@ -134,19 +138,6 @@ public class RecommendAlgor {
         }
     }
 
-    /**
-     * 我想将两个推荐结果混合,ratio表示混合加权时map1与map2的比值
-     * @param map1
-     * @param map2
-     * @param ratio
-     * @return
-     */
-    private Map<Long, Map<Long, Float>> mix(Map<Long, Map<Long, Float>> map1, Map<Long, Map<Long, Float>> map2, float ratio) {
-        return null;
-    }
-
-
-
     public void knn(Map<Long, List<Long>> contentMap) {
         //取数据
         //有音乐操作记录的用户
@@ -154,7 +145,7 @@ public class RecommendAlgor {
                 .map(LikeInfo::getUserId).distinct().collect(toList());
         //音乐集合
         List<Long> songIdList = likeInfoService.list().stream()
-                .map(LikeInfo::getMusicId).collect(toList());
+                .map(LikeInfo::getMusicId).distinct().collect(toList());
         List<LikeInfo> list = likeInfoService.list();
         List<LikeInfo> downloadList = list.stream().filter(l -> SongListTypeEnum.DOWNLOAD.getCode().equals(l.getLikeType())).collect(toList());
         List<LikeInfo> playList = list.stream().filter(l -> SongListTypeEnum.PLAY.getCode().equals(l.getLikeType())).collect(toList());

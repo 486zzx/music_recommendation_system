@@ -61,8 +61,7 @@ public class RecommendServiceImpl extends ServiceImpl<RecommendMapper, Recommend
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.NESTED)
     public void updateRecommend() {
         List<Recommend> list = recommenndDao.list();
-        boolean isNull = list == null || list.size() == 0;
-        recommendAlgor.recommend(isNull);
+        recommendAlgor.recommend();
     }
 
     @Override
